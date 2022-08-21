@@ -10,6 +10,8 @@ class RequestValidationException extends \InvalidArgumentException
 
     public const INVALID_LAST_NAME = 'Last name is empty';
 
+    public const INITIAL_BALANCE_NEGATIVE = 'Initial balance is negative';
+
     public static function withMessage(string $message): self
     {
         return new self($message);

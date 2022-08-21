@@ -14,4 +14,11 @@ class Validator
             throw RequestValidationException::withMessage($errorMessage);
         }
     }
+
+    public static function assertNotNegative(int $value, string $errorMessage): void
+    {
+        if ($value < 0) {
+            throw RequestValidationException::withMessage($errorMessage);
+        }
+    }
 }

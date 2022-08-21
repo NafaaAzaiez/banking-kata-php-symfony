@@ -10,9 +10,12 @@ class OpenAccountRequest
 
     public string $lastName;
 
-    public function __construct(string $firstName, string $lastName)
+    public int $initialBalance;
+
+    public function __construct(string $firstName, string $lastName, int $initialBalance)
     {
         $this->firstName = $firstName;
         $this->lastName = $lastName;
+        $this->initialBalance = $initialBalance;
     }
 }

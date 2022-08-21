@@ -21,7 +21,7 @@ class OpenAccountUseCaseTest extends KernelTestCase
 
     public function testResponseIsReceived()
     {
-        $request = new OpenAccountRequest('John', 'Doe');
+        $request = new OpenAccountRequest('John', 'Doe', 0);
         $expectedResponse = new OpenAccountResponse();
 
         $response = $this->useCase->__invoke($request);
@@ -34,7 +34,7 @@ class OpenAccountUseCaseTest extends KernelTestCase
      */
     public function testItThrowsExceptionWhenFirstNameIsEmpty(string $firstName)
     {
-        $request = new OpenAccountRequest($firstName, 'Doe');
+        $request = new OpenAccountRequest($firstName, 'Doe', 0);
 
         $this->expectException(RequestValidationException::class);
         $this->expectExceptionMessage(RequestValidationException::INVALID_FIRST_NAME);
@@ -46,10 +46,19 @@ class OpenAccountUseCaseTest extends KernelTestCase
      */
     public function testItThrowsExceptionWhenLastNameIsEmpty(string $lastName)
     {
-        $request = new OpenAccountRequest('Doe', $lastName);
+        $request = new OpenAccountRequest('Doe', $lastName, 0);
 
         $this->expectException(RequestValidationException::class);
         $this->expectExceptionMessage(RequestValidationException::INVALID_LAST_NAME);
+        $this->useCase->__invoke($request);
+    }
+
+    public function testItThrowsExceptionWhenInitialBalanceIsNegative()
+    {
+        $request = new OpenAccountRequest('John', 'Doe', -1);
+
+        $this->expectException(RequestValidationException::class);
+        $this->expectExceptionMessage(RequestValidationException::INITIAL_BALANCE_NEGATIVE);
         $this->useCase->__invoke($request);
     }
 
