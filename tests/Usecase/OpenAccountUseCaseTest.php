@@ -21,7 +21,7 @@ class OpenAccountUseCaseTest extends KernelTestCase
 
     public function testResponseIsReceived()
     {
-        $request = new OpenAccountRequest('John');
+        $request = new OpenAccountRequest('John', 'Doe');
         $expectedResponse = new OpenAccountResponse();
 
         $response = $this->useCase->__invoke($request);
@@ -30,18 +30,30 @@ class OpenAccountUseCaseTest extends KernelTestCase
     }
 
     /**
-     * @dataProvider emptyFirstNameValues
+     * @dataProvider emptyValues
      */
-    public function testItThrowsExceptionWhenFirstNameIsEmpty($firstName)
+    public function testItThrowsExceptionWhenFirstNameIsEmpty(string $firstName)
     {
-        $request = new OpenAccountRequest($firstName);
+        $request = new OpenAccountRequest($firstName, 'Doe');
 
         $this->expectException(RequestValidationException::class);
         $this->expectExceptionMessage(RequestValidationException::withEmptyFirstName()->getMessage());
         $this->useCase->__invoke($request);
     }
 
-    private function emptyFirstNameValues(): array
+    /**
+     * @dataProvider emptyValues
+     */
+    public function testItThrowsExceptionWhenLastNameIsEmpty(string $lastName)
+    {
+        $request = new OpenAccountRequest('Doe', $lastName);
+
+        $this->expectException(RequestValidationException::class);
+        $this->expectExceptionMessage(RequestValidationException::withEmptyLastName()->getMessage());
+        $this->useCase->__invoke($request);
+    }
+
+    private function emptyValues(): array
     {
         return [
             [''],

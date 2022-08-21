@@ -14,6 +14,10 @@ class OpenAccountUseCase
             throw RequestValidationException::withEmptyFirstName();
         }
 
+        if (empty(trim($request->lastName))) {
+            throw RequestValidationException::withEmptyLastName();
+        }
+
         return new OpenAccountResponse();
     }
 }
