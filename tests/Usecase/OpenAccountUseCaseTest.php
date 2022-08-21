@@ -37,7 +37,7 @@ class OpenAccountUseCaseTest extends KernelTestCase
         $request = new OpenAccountRequest($firstName, 'Doe');
 
         $this->expectException(RequestValidationException::class);
-        $this->expectExceptionMessage(RequestValidationException::withEmptyFirstName()->getMessage());
+        $this->expectExceptionMessage(RequestValidationException::INVALID_FIRST_NAME);
         $this->useCase->__invoke($request);
     }
 
@@ -49,7 +49,7 @@ class OpenAccountUseCaseTest extends KernelTestCase
         $request = new OpenAccountRequest('Doe', $lastName);
 
         $this->expectException(RequestValidationException::class);
-        $this->expectExceptionMessage(RequestValidationException::withEmptyLastName()->getMessage());
+        $this->expectExceptionMessage(RequestValidationException::INVALID_LAST_NAME);
         $this->useCase->__invoke($request);
     }
 

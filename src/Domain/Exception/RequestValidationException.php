@@ -10,13 +10,8 @@ class RequestValidationException extends \InvalidArgumentException
 
     public const INVALID_LAST_NAME = 'Last name is empty';
 
-    public static function withEmptyFirstName(): self
+    public static function withMessage(string $message): self
     {
-        return new self(self::INVALID_FIRST_NAME);
-    }
-
-    public static function withEmptyLastName(): self
-    {
-        return new self(self::INVALID_LAST_NAME);
+        return new self($message);
     }
 }
