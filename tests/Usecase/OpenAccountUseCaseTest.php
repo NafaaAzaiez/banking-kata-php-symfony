@@ -23,21 +23,10 @@ class OpenAccountUseCaseTest extends KernelTestCase
         $this->useCase = new OpenAccountUseCase($this->accountNumberGenerator);
     }
 
-    public function testItOpensAccountWhenRequestIsValid()
-    {
-        $request = new OpenAccountRequest('John', 'Doe', 0);
-        $this->accountNumberGenerator->add('fakeAccountNumber');
-        $expectedResponse = new OpenAccountResponse('fakeAccountNumber');
-
-        $response = $this->useCase->__invoke($request);
-
-        $this->assertEquals($expectedResponse, $response);
-    }
-
     /**
      * @dataProvider provideAccountNumbers
      */
-    public function testItOpensAccountWithGeneratedAccountNumbers(string $accountNumber)
+    public function testItOpensAccountGivenValidRequest(string $accountNumber)
     {
         $request = new OpenAccountRequest('John', 'Doe', 0);
         $expectedResponse = new OpenAccountResponse($accountNumber);
@@ -49,9 +38,9 @@ class OpenAccountUseCaseTest extends KernelTestCase
     }
 
     /**
-     * @dataProvider emptyValues
+     * @dataProvider provideEmptyValues
      */
-    public function testItThrowsExceptionWhenFirstNameIsEmpty(string $firstName)
+    public function testItThrowsExceptionGivenEmptyFirstName(string $firstName)
     {
         $request = new OpenAccountRequest($firstName, 'Doe', 0);
 
@@ -61,9 +50,9 @@ class OpenAccountUseCaseTest extends KernelTestCase
     }
 
     /**
-     * @dataProvider emptyValues
+     * @dataProvider provideEmptyValues
      */
-    public function testItThrowsExceptionWhenLastNameIsEmpty(string $lastName)
+    public function testItThrowsExceptionGivenEmptyLastName(string $lastName)
     {
         $request = new OpenAccountRequest('Doe', $lastName, 0);
 
@@ -72,7 +61,7 @@ class OpenAccountUseCaseTest extends KernelTestCase
         $this->useCase->__invoke($request);
     }
 
-    public function testItThrowsExceptionWhenInitialBalanceIsNegative()
+    public function testItThrowsExceptionGivenNegativeInitialBalance()
     {
         $request = new OpenAccountRequest('John', 'Doe', -1);
 
@@ -86,13 +75,8 @@ class OpenAccountUseCaseTest extends KernelTestCase
         return [['A001'], ['B002'], ['C003']];
     }
 
-    private function emptyValues(): array
+    private function provideEmptyValues(): array
     {
-        return [
-            [''],
-            [' '],
-            ['   '],
-            ]
-        ;
+        return [[''], [' '], ['   ']];
     }
 }
