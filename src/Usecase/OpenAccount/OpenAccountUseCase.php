@@ -15,6 +15,6 @@ class OpenAccountUseCase
         Validator::assertNotBlank($request->lastName, RequestValidationException::INVALID_LAST_NAME);
         Validator::assertNotNegative($request->initialBalance, RequestValidationException::INITIAL_BALANCE_NEGATIVE);
 
-        return new OpenAccountResponse();
+        return new OpenAccountResponse('fakeAccountNumber');
     }
 }

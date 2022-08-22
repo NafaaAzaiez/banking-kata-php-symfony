@@ -19,10 +19,10 @@ class OpenAccountUseCaseTest extends KernelTestCase
         $this->useCase = new OpenAccountUseCase();
     }
 
-    public function testResponseIsReceived()
+    public function testItOpensAccountWhenRequestIsValid()
     {
         $request = new OpenAccountRequest('John', 'Doe', 0);
-        $expectedResponse = new OpenAccountResponse();
+        $expectedResponse = new OpenAccountResponse('fakeAccountNumber');
 
         $response = $this->useCase->__invoke($request);
 
