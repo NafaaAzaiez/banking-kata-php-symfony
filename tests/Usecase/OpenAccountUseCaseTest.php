@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Usecase;
 
+use App\Domain\Entity\BankAccount;
 use App\Domain\Exception\RequestValidationException;
 use App\Usecase\OpenAccount\OpenAccountRequest;
 use App\Usecase\OpenAccount\OpenAccountResponse;
 use App\Usecase\OpenAccount\OpenAccountUseCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Tests\Fake\FakeAccountNumberGenerator;
+use Tests\Fake\FakeBankAccountRepository;
 
 class OpenAccountUseCaseTest extends KernelTestCase
 {
@@ -17,10 +19,13 @@ class OpenAccountUseCaseTest extends KernelTestCase
 
     private FakeAccountNumberGenerator $accountNumberGenerator;
 
+    private FakeBankAccountRepository $bankAccountRepository;
+
     protected function setUp(): void
     {
         $this->accountNumberGenerator = new FakeAccountNumberGenerator();
-        $this->useCase = new OpenAccountUseCase($this->accountNumberGenerator);
+        $this->bankAccountRepository = new FakeBankAccountRepository();
+        $this->useCase = new OpenAccountUseCase($this->accountNumberGenerator, $this->bankAccountRepository);
     }
 
     /**
@@ -31,10 +36,14 @@ class OpenAccountUseCaseTest extends KernelTestCase
         $request = new OpenAccountRequest('John', 'Doe', 0);
         $expectedResponse = new OpenAccountResponse($accountNumber);
         $this->accountNumberGenerator->add($accountNumber);
+        $expectedBankAccount = new BankAccount($accountNumber);
 
         $response = $this->useCase->__invoke($request);
 
+        $retrievedBankAccount = $this->bankAccountRepository->find($accountNumber);
+
         $this->assertEquals($expectedResponse, $response);
+        $this->assertEquals($expectedBankAccount, $retrievedBankAccount);
     }
 
     /**
