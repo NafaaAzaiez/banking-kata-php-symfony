@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Usecase\OpenAccount;
 
-use App\Domain\Entity\BankAccount;
+use App\Domain\Account\AccountNumberGenerator;
+use App\Domain\Account\BankAccount;
+use App\Domain\Account\BankAccountRepository;
 use App\Domain\Exception\RequestValidationException;
-use App\Domain\Generators\AccountNumberGenerator;
-use App\Domain\Repository\BankAccountRepository;
 use App\Domain\Validation\Validator;
 
 class OpenAccountUseCase

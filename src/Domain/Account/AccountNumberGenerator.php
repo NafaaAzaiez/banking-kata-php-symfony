@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Generators;
+namespace App\Domain\Account;
 
 interface AccountNumberGenerator
 {

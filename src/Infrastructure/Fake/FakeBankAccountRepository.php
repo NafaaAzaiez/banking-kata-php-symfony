@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Fake;
+namespace App\Infrastructure\Fake;
 
-use App\Domain\Entity\BankAccount;
-use App\Domain\Repository\BankAccountRepository;
+use App\Domain\Account\BankAccount;
+use App\Domain\Account\BankAccountRepository;
 
 class FakeBankAccountRepository implements BankAccountRepository
 {

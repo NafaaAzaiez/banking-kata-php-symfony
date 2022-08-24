@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Tests\Fake;
+namespace App\Infrastructure\Fake;
 
-use App\Domain\Generators\AccountNumberGenerator;
+use App\Domain\Account\AccountNumberGenerator;
 
 class FakeAccountNumberGenerator implements AccountNumberGenerator
 {

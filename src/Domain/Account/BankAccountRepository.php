@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Repository;
-
-use App\Domain\Entity\BankAccount;
+namespace App\Domain\Account;
 
 interface BankAccountRepository
 {

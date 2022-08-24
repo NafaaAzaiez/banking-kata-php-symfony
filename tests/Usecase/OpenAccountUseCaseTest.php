@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Usecase;
 
-use App\Domain\Entity\BankAccount;
+use App\Domain\Account\BankAccount;
 use App\Domain\Exception\RequestValidationException;
+use App\Infrastructure\Fake\FakeAccountNumberGenerator;
+use App\Infrastructure\Fake\FakeBankAccountRepository;
 use App\Usecase\OpenAccount\OpenAccountRequest;
 use App\Usecase\OpenAccount\OpenAccountResponse;
 use App\Usecase\OpenAccount\OpenAccountUseCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Tests\Fake\FakeAccountNumberGenerator;
-use Tests\Fake\FakeBankAccountRepository;
 
 class OpenAccountUseCaseTest extends KernelTestCase
 {
