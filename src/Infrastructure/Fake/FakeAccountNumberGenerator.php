@@ -8,12 +8,14 @@ use App\Domain\Account\AccountNumberGenerator;
 
 class FakeAccountNumberGenerator implements AccountNumberGenerator
 {
+    public const COULD_NOT_GENERATE_NUMBER_MESSAGE = 'Could not generate an account number';
+
     private array $generatedAccountNumbers = [];
 
     public function generate(): string
     {
         if (0 === sizeof($this->generatedAccountNumbers)) {
-            throw new \RuntimeException('Could not generate an account number');
+            throw new \RuntimeException(self::COULD_NOT_GENERATE_NUMBER_MESSAGE);
         }
 
         return (string) array_shift($this->generatedAccountNumbers);
