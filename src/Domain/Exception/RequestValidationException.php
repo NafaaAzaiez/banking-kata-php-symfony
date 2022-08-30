@@ -14,6 +14,8 @@ class RequestValidationException extends \InvalidArgumentException
 
     public const EMPTY_ACCOUNT_NUMBER = 'Account number is empty';
 
+    public const ACCOUNT_NUMBER_NOT_FOUND = 'Account number not found';
+
     public static function withMessage(string $message): self
     {
         return new self($message);
