@@ -12,6 +12,8 @@ class RequestValidationException extends \InvalidArgumentException
 
     public const INITIAL_BALANCE_NEGATIVE = 'Initial balance is negative';
 
+    public const EMPTY_ACCOUNT_NUMBER = 'Account number is empty';
+
     public static function withMessage(string $message): self
     {
         return new self($message);
