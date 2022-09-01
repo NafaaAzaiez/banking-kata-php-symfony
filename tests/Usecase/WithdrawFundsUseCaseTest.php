@@ -31,7 +31,7 @@ class WithdrawFundsUseCaseTest extends TestCase
         $bankAccount = new BankAccount($accountNumber);
         $this->bankAccountRepository->add($bankAccount);
 
-        $request = new WithdrawFundsRequest($accountNumber);
+        $request = new WithdrawFundsRequest($accountNumber, 10);
         $expectedResponse = new WithdrawFundsResponse();
 
         $response = $this->useCase->__invoke($request);
@@ -42,7 +42,7 @@ class WithdrawFundsUseCaseTest extends TestCase
     public function testItThrowExceptionGivenNonExistentAccountNumber(): void
     {
         $accountNumber = 'willNotBeFound';
-        $request = new WithdrawFundsRequest($accountNumber);
+        $request = new WithdrawFundsRequest($accountNumber, 10);
 
         $this->expectException(\DomainException::class);
         $this->expectExceptionMessage(BankAccountRepository::BANK_ACCOUNT_NOT_FOUND_EXCEPTION_MESSAGE);
@@ -55,12 +55,34 @@ class WithdrawFundsUseCaseTest extends TestCase
      */
     public function testItThrowExceptionGivenEmptyAccountNumber(string $accountNumber): void
     {
-        $request = new WithdrawFundsRequest($accountNumber);
+        $request = new WithdrawFundsRequest($accountNumber, 10);
 
         $this->expectException(RequestValidationException::class);
         $this->expectExceptionMessage(RequestValidationException::EMPTY_ACCOUNT_NUMBER);
 
         $this->useCase->__invoke($request);
+    }
+
+    /**
+     * @dataProvider provideNonPositiveIntegers
+     */
+    public function testItThrowsExceptionGivenNonPositiveAmount(int $amount): void
+    {
+        $accountNumber = 'Y665242';
+        $bankAccount = new BankAccount($accountNumber);
+        $this->bankAccountRepository->add($bankAccount);
+
+        $request = new WithdrawFundsRequest($accountNumber, $amount);
+
+        $this->expectException(RequestValidationException::class);
+        $this->expectExceptionMessage(RequestValidationException::NON_POSITIVE_TRANSACTION_AMOUNT);
+
+        $this->useCase->__invoke($request);
+    }
+
+    private function provideNonPositiveIntegers(): array
+    {
+        return [[0], [-1], [-12]];
     }
 
     private function provideEmptyValues(): array

@@ -79,7 +79,7 @@ class OpenAccountUseCaseTest extends KernelTestCase
         $this->useCase->__invoke($request);
     }
 
-    public function provideAccountNumbers(): array
+    private function provideAccountNumbers(): array
     {
         return [['A001'], ['B002'], ['C003']];
     }

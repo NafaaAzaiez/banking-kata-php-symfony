@@ -16,6 +16,8 @@ class RequestValidationException extends \InvalidArgumentException
 
     public const ACCOUNT_NUMBER_NOT_FOUND = 'Account number not found';
 
+    public const NON_POSITIVE_TRANSACTION_AMOUNT = 'Transaction amount is not positive';
+
     public static function withMessage(string $message): self
     {
         return new self($message);
