@@ -31,7 +31,7 @@ class OpenAccountUseCaseTest extends KernelTestCase
     /**
      * @dataProvider provideAccountNumbers
      */
-    public function testItOpensAccountGivenValidRequest(string $accountNumber)
+    public function testItOpensAccountGivenValidRequest(string $accountNumber): void
     {
         $initialBalance = 100;
         $request = new OpenAccountRequest('John', 'Doe', $initialBalance);
@@ -50,7 +50,7 @@ class OpenAccountUseCaseTest extends KernelTestCase
     /**
      * @dataProvider provideEmptyValues
      */
-    public function testItThrowsExceptionGivenEmptyFirstName(string $firstName)
+    public function testItThrowsExceptionGivenEmptyFirstName(string $firstName): void
     {
         $request = new OpenAccountRequest($firstName, 'Doe', 0);
 
@@ -62,7 +62,7 @@ class OpenAccountUseCaseTest extends KernelTestCase
     /**
      * @dataProvider provideEmptyValues
      */
-    public function testItThrowsExceptionGivenEmptyLastName(string $lastName)
+    public function testItThrowsExceptionGivenEmptyLastName(string $lastName): void
     {
         $request = new OpenAccountRequest('Doe', $lastName, 0);
 
@@ -71,7 +71,7 @@ class OpenAccountUseCaseTest extends KernelTestCase
         $this->useCase->__invoke($request);
     }
 
-    public function testItThrowsExceptionGivenNegativeInitialBalance()
+    public function testItThrowsExceptionGivenNegativeInitialBalance(): void
     {
         $request = new OpenAccountRequest('John', 'Doe', -1);
 

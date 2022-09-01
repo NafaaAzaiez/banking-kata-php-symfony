@@ -16,19 +16,19 @@ class FakeAccountNumberGeneratorTest extends TestCase
         $this->accountNumberGenerator = new FakeAccountNumberGenerator();
     }
 
-    public function testItThrowsExceptionWhenNoElement()
+    public function testItThrowsExceptionWhenNoElement(): void
     {
         $this->assertGenerateThrowsException();
     }
 
-    public function testItGenerateNumberWhenThereIsOneAvailable()
+    public function testItGenerateNumberWhenThereIsOneAvailable(): void
     {
         $expectedValue = 'A45678';
         $this->accountNumberGenerator->add($expectedValue);
         $this->assertGeneratedNumberEquals($expectedValue);
     }
 
-    public function testItGenerateMultipleNumbersWhenPossibleThenThrowsException()
+    public function testItGenerateMultipleNumbersWhenPossibleThenThrowsException(): void
     {
         $expectedValue1 = 'A45678';
         $expectedValue2 = 'B56787';
@@ -43,12 +43,12 @@ class FakeAccountNumberGeneratorTest extends TestCase
         $this->assertGenerateThrowsException();
     }
 
-    private function assertGeneratedNumberEquals(string $number)
+    private function assertGeneratedNumberEquals(string $number): void
     {
         $this->assertEquals($number, $this->accountNumberGenerator->generate());
     }
 
-    private function assertGenerateThrowsException()
+    private function assertGenerateThrowsException(): void
     {
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage(FakeAccountNumberGenerator::COULD_NOT_GENERATE_NUMBER_MESSAGE);

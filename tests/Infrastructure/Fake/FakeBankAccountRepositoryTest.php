@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Infrastructure\Fake;
 
 use App\Domain\Account\BankAccount;
+use App\Domain\Account\BankAccountRepository;
 use App\Infrastructure\Fake\FakeBankAccountRepository;
 use PHPUnit\Framework\TestCase;
 
@@ -17,19 +18,20 @@ class FakeBankAccountRepositoryTest extends TestCase
         $this->bankAccountRepository = new FakeBankAccountRepository();
     }
 
-    public function testItThrowsExceptionWhenBankAccountNotFound()
+    public function testItThrowsExceptionWhenBankAccountNotFound(): void
     {
         $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage(FakeBankAccountRepository::BANK_ACCOUNT_NOT_FOUND_EXCEPTION_MESSAGE);
+        $this->expectExceptionMessage(BankAccountRepository::BANK_ACCOUNT_NOT_FOUND_EXCEPTION_MESSAGE);
 
         $this->bankAccountRepository->find('whatever');
     }
 
-    public function itReturnsBankAccountWhenItIsFound()
+    public function itReturnsBankAccountWhenItIsFound(): void
     {
         $accountNumber = 'X89799810';
         $bankAccount = new BankAccount($accountNumber, 100);
         $this->bankAccountRepository->add($bankAccount);
-        $this->assertSame($bankAccount, $this->bankAccountRepository->find($accountNumber));
+        $retrievedBankAccount = $this->bankAccountRepository->find($accountNumber);
+        $this->assertSame($bankAccount, $retrievedBankAccount);
     }
 }
