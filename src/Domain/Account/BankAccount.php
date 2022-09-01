@@ -8,13 +8,21 @@ class BankAccount
 {
     private string $accountNumber;
 
-    public function __construct(string $accountNumber)
+    private int $balance;
+
+    public function __construct(string $accountNumber, int $balance)
     {
         $this->accountNumber = $accountNumber;
+        $this->balance = $balance;
     }
 
     public function getAccountNumber(): string
     {
         return $this->accountNumber;
+    }
+
+    public function getBalance(): int
+    {
+        return $this->balance;
     }
 }

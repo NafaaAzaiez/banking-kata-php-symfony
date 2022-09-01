@@ -28,7 +28,7 @@ class FakeBankAccountRepositoryTest extends TestCase
     public function itReturnsBankAccountWhenItIsFound()
     {
         $accountNumber = 'X89799810';
-        $bankAccount = new BankAccount($accountNumber);
+        $bankAccount = new BankAccount($accountNumber, 100);
         $this->bankAccountRepository->add($bankAccount);
         $this->assertSame($bankAccount, $this->bankAccountRepository->find($accountNumber));
     }

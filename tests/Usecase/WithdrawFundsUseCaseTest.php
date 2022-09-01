@@ -25,14 +25,18 @@ class WithdrawFundsUseCaseTest extends TestCase
         $this->useCase = new WithdrawFundsUseCase($this->bankAccountRepository);
     }
 
-    public function testItReturnsResponse()
+    public function testItWithdrawsFundsGivenValidRequest()
     {
         $accountNumber = 'Y665242';
-        $bankAccount = new BankAccount($accountNumber);
+        $initialBalance = 50;
+        $bankAccount = new BankAccount($accountNumber, $initialBalance);
         $this->bankAccountRepository->add($bankAccount);
 
-        $request = new WithdrawFundsRequest($accountNumber, 10);
-        $expectedResponse = new WithdrawFundsResponse();
+        $amount = 10;
+        $request = new WithdrawFundsRequest($accountNumber, $amount);
+
+        $expectedFinalBalance = 40;
+        $expectedResponse = new WithdrawFundsResponse($expectedFinalBalance);
 
         $response = $this->useCase->__invoke($request);
 
@@ -69,7 +73,7 @@ class WithdrawFundsUseCaseTest extends TestCase
     public function testItThrowsExceptionGivenNonPositiveAmount(int $amount): void
     {
         $accountNumber = 'Y665242';
-        $bankAccount = new BankAccount($accountNumber);
+        $bankAccount = new BankAccount($accountNumber, 100);
         $this->bankAccountRepository->add($bankAccount);
 
         $request = new WithdrawFundsRequest($accountNumber, $amount);

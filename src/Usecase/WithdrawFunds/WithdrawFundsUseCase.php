@@ -24,6 +24,8 @@ class WithdrawFundsUseCase
 
         $bankAccount = $this->bankAccountRepository->find($request->accountNumber);
 
-        return new WithdrawFundsResponse();
+        $balance = $bankAccount->getBalance() - $request->amount;
+
+        return new WithdrawFundsResponse($balance);
     }
 }
