@@ -6,6 +6,7 @@ namespace Tests\Usecase;
 
 use App\Domain\Account\BankAccount;
 use App\Domain\Account\BankAccountRepository;
+use App\Domain\Exception\RepositoryException;
 use App\Domain\Exception\RequestValidationException;
 use App\Infrastructure\Fake\FakeBankAccountRepository;
 use App\Usecase\WithdrawFunds\WithdrawFundsRequest;
@@ -41,6 +42,11 @@ class WithdrawFundsUseCaseTest extends TestCase
         $response = $this->useCase->__invoke($request);
 
         $this->assertEquals($expectedResponse, $response);
+
+        $expectedBankAccount = new BankAccount($accountNumber, $expectedFinalBalance);
+        $retrievedBankAccount = $this->bankAccountRepository->find($accountNumber);
+
+        $this->assertEquals($expectedBankAccount, $retrievedBankAccount);
     }
 
     public function testItThrowExceptionGivenNonExistentAccountNumber(): void
@@ -49,7 +55,7 @@ class WithdrawFundsUseCaseTest extends TestCase
         $request = new WithdrawFundsRequest($accountNumber, 10);
 
         $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage(BankAccountRepository::BANK_ACCOUNT_NOT_FOUND_EXCEPTION_MESSAGE);
+        $this->expectExceptionMessage(RepositoryException::BANK_ACCOUNT_NOT_FOUND_EXCEPTION_MESSAGE);
 
         $this->useCase->__invoke($request);
     }
@@ -72,6 +78,7 @@ class WithdrawFundsUseCaseTest extends TestCase
      */
     public function testItThrowsExceptionGivenNonPositiveAmount(int $amount): void
     {
+        FakeBankAccountRepository::reset();
         $accountNumber = 'Y665242';
         $bankAccount = new BankAccount($accountNumber, 100);
         $this->bankAccountRepository->add($bankAccount);

@@ -25,4 +25,9 @@ class BankAccount
     {
         return $this->balance;
     }
+
+    public function setBalance(int $balance): void
+    {
+        $this->balance = $balance;
+    }
 }
