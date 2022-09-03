@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Usecase;
 
-use App\Domain\Account\BankAccount;
 use App\Domain\Account\BankAccountRepository;
 use App\Domain\Exception\RepositoryException;
 use App\Domain\Exception\RequestValidationException;
@@ -13,6 +12,7 @@ use App\Usecase\WithdrawFunds\WithdrawFundsRequest;
 use App\Usecase\WithdrawFunds\WithdrawFundsResponse;
 use App\Usecase\WithdrawFunds\WithdrawFundsUseCase;
 use PHPUnit\Framework\TestCase;
+use Tests\Common\Factory;
 
 class WithdrawFundsUseCaseTest extends TestCase
 {
@@ -30,7 +30,7 @@ class WithdrawFundsUseCaseTest extends TestCase
     {
         $accountNumber = 'Y665242';
         $initialBalance = 50;
-        $bankAccount = new BankAccount($accountNumber, $initialBalance);
+        $bankAccount = Factory::createDefaultBankAccount($accountNumber, $initialBalance);
         $this->bankAccountRepository->add($bankAccount);
 
         $amount = 10;
@@ -43,7 +43,7 @@ class WithdrawFundsUseCaseTest extends TestCase
 
         $this->assertEquals($expectedResponse, $response);
 
-        $expectedBankAccount = new BankAccount($accountNumber, $expectedFinalBalance);
+        $expectedBankAccount = Factory::createDefaultBankAccount($accountNumber, $expectedFinalBalance);
         $retrievedBankAccount = $this->bankAccountRepository->find($accountNumber);
 
         $this->assertEquals($expectedBankAccount, $retrievedBankAccount);
@@ -80,7 +80,7 @@ class WithdrawFundsUseCaseTest extends TestCase
     {
         FakeBankAccountRepository::reset();
         $accountNumber = 'Y665242';
-        $bankAccount = new BankAccount($accountNumber, 100);
+        $bankAccount = Factory::createDefaultBankAccount($accountNumber);
         $this->bankAccountRepository->add($bankAccount);
 
         $request = new WithdrawFundsRequest($accountNumber, $amount);

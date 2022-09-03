@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Infrastructure\Fake;
 
-use App\Domain\Account\BankAccount;
 use App\Domain\Exception\RepositoryException;
 use App\Infrastructure\Fake\FakeBankAccountRepository;
 use PHPUnit\Framework\TestCase;
+use Tests\Common\Factory;
 
 class FakeBankAccountRepositoryTest extends TestCase
 {
@@ -34,7 +34,7 @@ class FakeBankAccountRepositoryTest extends TestCase
     public function itReturnsBankAccountWhenItIsFound(): void
     {
         $accountNumber = 'X89799810';
-        $bankAccount = new BankAccount($accountNumber, 100);
+        $bankAccount = Factory::createDefaultBankAccount($accountNumber);
         $this->bankAccountRepository->add($bankAccount);
         $retrievedBankAccount = $this->bankAccountRepository->find($accountNumber);
         $this->assertEquals($bankAccount, $retrievedBankAccount);
@@ -43,8 +43,8 @@ class FakeBankAccountRepositoryTest extends TestCase
     public function testItShouldNotBeAbleToChangeBankAccountAfterAdd(): void
     {
         $accountNumber = 'X89799810';
-        $bankAccount = new BankAccount($accountNumber, 100);
-        $expectedBankAccount = new BankAccount($accountNumber, 100);
+        $bankAccount = Factory::createDefaultBankAccount($accountNumber);
+        $expectedBankAccount = Factory::createDefaultBankAccount($accountNumber);
 
         $this->bankAccountRepository->add($bankAccount);
 
@@ -58,8 +58,8 @@ class FakeBankAccountRepositoryTest extends TestCase
     public function testItShouldNotBeAbleToChangeBankAccountAfterFind(): void
     {
         $accountNumber = 'X89799810';
-        $bankAccount = new BankAccount($accountNumber, 100);
-        $expectedBankAccount = new BankAccount($accountNumber, 100);
+        $bankAccount = Factory::createDefaultBankAccount($accountNumber);
+        $expectedBankAccount = Factory::createDefaultBankAccount($accountNumber);
 
         $this->bankAccountRepository->add($bankAccount);
 
@@ -75,8 +75,8 @@ class FakeBankAccountRepositoryTest extends TestCase
     {
         $accountNumber = 'X89799810';
         $initialBalance = 100;
-        $bankAccount = new BankAccount($accountNumber, $initialBalance);
-        $expectedBankAccount = new BankAccount($accountNumber, $initialBalance);
+        $bankAccount = Factory::createDefaultBankAccount($accountNumber, $initialBalance);
+        $expectedBankAccount = Factory::createDefaultBankAccount($accountNumber, $initialBalance);
 
         $this->bankAccountRepository->add($bankAccount);
 
@@ -94,8 +94,8 @@ class FakeBankAccountRepositoryTest extends TestCase
         $accountNumber = 'X89799810';
         $initialBalance = 100;
         $expectedBalance = 50;
-        $bankAccount = new BankAccount($accountNumber, $initialBalance);
-        $expectedBankAccount = new BankAccount($accountNumber, $expectedBalance);
+        $bankAccount = Factory::createDefaultBankAccount($accountNumber, $initialBalance);
+        $expectedBankAccount = Factory::createDefaultBankAccount($accountNumber, $expectedBalance);
 
         $this->bankAccountRepository->add($bankAccount);
 
@@ -111,7 +111,7 @@ class FakeBankAccountRepositoryTest extends TestCase
     public function shouldThrowExceptionWhenAttemptAddBankAccountWithSameAccountNumberTwice(): void
     {
         $accountNumber = 'X89799810';
-        $bankAccount = new BankAccount($accountNumber, 100);
+        $bankAccount = Factory::createDefaultBankAccount($accountNumber);
 
         $this->bankAccountRepository->add($bankAccount);
 

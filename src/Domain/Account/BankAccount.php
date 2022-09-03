@@ -8,11 +8,17 @@ class BankAccount
 {
     private string $accountNumber;
 
+    private string $firstName;
+
+    private string $lastName;
+
     private int $balance;
 
-    public function __construct(string $accountNumber, int $balance)
+    public function __construct(string $accountNumber, string $firstName, string $lastName, int $balance)
     {
         $this->accountNumber = $accountNumber;
+        $this->firstName = $firstName;
+        $this->lastName = $lastName;
         $this->balance = $balance;
     }
 

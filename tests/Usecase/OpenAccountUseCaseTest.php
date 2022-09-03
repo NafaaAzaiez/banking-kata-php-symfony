@@ -37,7 +37,7 @@ class OpenAccountUseCaseTest extends KernelTestCase
         $request = new OpenAccountRequest('John', 'Doe', $initialBalance);
         $expectedResponse = new OpenAccountResponse($accountNumber);
         $this->accountNumberGenerator->add($accountNumber);
-        $expectedBankAccount = new BankAccount($accountNumber, $initialBalance);
+        $expectedBankAccount = new BankAccount($accountNumber, $request->firstName, $request->lastName, $initialBalance);
 
         $response = $this->useCase->__invoke($request);
 

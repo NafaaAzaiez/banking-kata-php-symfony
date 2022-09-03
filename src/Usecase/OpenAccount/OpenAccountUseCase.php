@@ -29,7 +29,7 @@ class OpenAccountUseCase
         Validator::assertNotNegative($request->initialBalance, RequestValidationException::INITIAL_BALANCE_NEGATIVE);
 
         $accountNumber = $this->accountNumberGenerator->generate();
-        $bankAccount = new BankAccount($accountNumber, $request->initialBalance);
+        $bankAccount = new BankAccount($accountNumber, $request->firstName, $request->lastName, $request->initialBalance);
         $this->bankAccountRepository->add($bankAccount);
 
         return new OpenAccountResponse($accountNumber);
