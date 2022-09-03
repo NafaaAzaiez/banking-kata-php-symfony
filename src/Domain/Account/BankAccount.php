@@ -6,7 +6,7 @@ namespace App\Domain\Account;
 
 class BankAccount
 {
-    private string $accountNumber;
+    private AccountNumber $accountNumber;
 
     private string $firstName;
 
@@ -14,7 +14,7 @@ class BankAccount
 
     private int $balance;
 
-    public function __construct(string $accountNumber, string $firstName, string $lastName, int $balance)
+    public function __construct(AccountNumber $accountNumber, string $firstName, string $lastName, int $balance)
     {
         $this->accountNumber = $accountNumber;
         $this->firstName = $firstName;
@@ -22,7 +22,7 @@ class BankAccount
         $this->balance = $balance;
     }
 
-    public function getAccountNumber(): string
+    public function getAccountNumber(): AccountNumber
     {
         return $this->accountNumber;
     }

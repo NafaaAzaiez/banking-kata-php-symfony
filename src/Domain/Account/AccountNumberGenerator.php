@@ -6,5 +6,5 @@ namespace App\Domain\Account;
 
 interface AccountNumberGenerator
 {
-    public function generate(): string;
+    public function generate(): AccountNumber;
 }

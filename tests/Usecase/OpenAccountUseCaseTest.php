@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Usecase;
 
+use App\Domain\Account\AccountNumber;
 use App\Domain\Account\BankAccount;
 use App\Domain\Exception\RequestValidationException;
 use App\Infrastructure\Fake\FakeAccountNumberGenerator;
@@ -12,6 +13,7 @@ use App\Usecase\OpenAccount\OpenAccountRequest;
 use App\Usecase\OpenAccount\OpenAccountResponse;
 use App\Usecase\OpenAccount\OpenAccountUseCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Tests\Common\Factory;
 
 class OpenAccountUseCaseTest extends KernelTestCase
 {
@@ -36,12 +38,12 @@ class OpenAccountUseCaseTest extends KernelTestCase
         $initialBalance = 100;
         $request = new OpenAccountRequest('John', 'Doe', $initialBalance);
         $expectedResponse = new OpenAccountResponse($accountNumber);
-        $this->accountNumberGenerator->add($accountNumber);
-        $expectedBankAccount = new BankAccount($accountNumber, $request->firstName, $request->lastName, $initialBalance);
+        $this->registerAccountNumber($accountNumber);
+        $expectedBankAccount = Factory::createBankAccount($accountNumber, $request->firstName, $request->lastName, $initialBalance);
 
         $response = $this->useCase->__invoke($request);
 
-        $retrievedBankAccount = $this->bankAccountRepository->find($accountNumber);
+        $retrievedBankAccount = $this->find($accountNumber);
 
         $this->assertEquals($expectedResponse, $response);
         $this->assertEquals($expectedBankAccount, $retrievedBankAccount);
@@ -88,5 +90,15 @@ class OpenAccountUseCaseTest extends KernelTestCase
     private function provideEmptyValues(): array
     {
         return [[''], [' '], ['   ']];
+    }
+
+    private function registerAccountNumber(string $accountNumber): void
+    {
+        $this->accountNumberGenerator->add(new AccountNumber($accountNumber));
+    }
+
+    private function find(string $accountNumber): BankAccount
+    {
+        return $this->bankAccountRepository->find(new AccountNumber($accountNumber));
     }
 }

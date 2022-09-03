@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Infrastructure\Fake;
 
+use App\Domain\Account\AccountNumber;
+use App\Domain\Account\BankAccount;
 use App\Domain\Exception\RepositoryException;
 use App\Infrastructure\Fake\FakeBankAccountRepository;
 use PHPUnit\Framework\TestCase;
@@ -28,7 +30,7 @@ class FakeBankAccountRepositoryTest extends TestCase
         $this->expectException(RepositoryException::class);
         $this->expectExceptionMessage(RepositoryException::BANK_ACCOUNT_NOT_FOUND_EXCEPTION_MESSAGE);
 
-        $this->bankAccountRepository->find('whatever');
+        $this->find('whatever');
     }
 
     public function itReturnsBankAccountWhenItIsFound(): void
@@ -36,7 +38,7 @@ class FakeBankAccountRepositoryTest extends TestCase
         $accountNumber = 'X89799810';
         $bankAccount = Factory::createDefaultBankAccount($accountNumber);
         $this->bankAccountRepository->add($bankAccount);
-        $retrievedBankAccount = $this->bankAccountRepository->find($accountNumber);
+        $retrievedBankAccount = $this->find($accountNumber);
         $this->assertEquals($bankAccount, $retrievedBankAccount);
     }
 
@@ -50,7 +52,7 @@ class FakeBankAccountRepositoryTest extends TestCase
 
         $bankAccount->setBalance(500);
 
-        $retrievedBankAccount = $this->bankAccountRepository->find($accountNumber);
+        $retrievedBankAccount = $this->find($accountNumber);
 
         $this->assertEquals($expectedBankAccount, $retrievedBankAccount);
     }
@@ -63,10 +65,10 @@ class FakeBankAccountRepositoryTest extends TestCase
 
         $this->bankAccountRepository->add($bankAccount);
 
-        $retrievedBankAccount = $this->bankAccountRepository->find($accountNumber);
+        $retrievedBankAccount = $this->find($accountNumber);
         $retrievedBankAccount->setBalance(500);
 
-        $retrievedBankAccountAfterModification = $this->bankAccountRepository->find($accountNumber);
+        $retrievedBankAccountAfterModification = $this->find($accountNumber);
 
         $this->assertEquals($expectedBankAccount, $retrievedBankAccountAfterModification);
     }
@@ -80,11 +82,11 @@ class FakeBankAccountRepositoryTest extends TestCase
 
         $this->bankAccountRepository->add($bankAccount);
 
-        $retrievedBankAccount = $this->bankAccountRepository->find($accountNumber);
+        $retrievedBankAccount = $this->find($accountNumber);
         $this->bankAccountRepository->update($retrievedBankAccount);
         $retrievedBankAccount->setBalance(500);
 
-        $retrievedBankAccountAfterUpdate = $this->bankAccountRepository->find($accountNumber);
+        $retrievedBankAccountAfterUpdate = $this->find($accountNumber);
 
         $this->assertEquals($expectedBankAccount, $retrievedBankAccountAfterUpdate);
     }
@@ -99,11 +101,11 @@ class FakeBankAccountRepositoryTest extends TestCase
 
         $this->bankAccountRepository->add($bankAccount);
 
-        $retrievedBankAccount = $this->bankAccountRepository->find($accountNumber);
+        $retrievedBankAccount = $this->find($accountNumber);
         $retrievedBankAccount->setBalance(50);
         $this->bankAccountRepository->update($retrievedBankAccount);
 
-        $retrievedBankAccountAfterUpdate = $this->bankAccountRepository->find($accountNumber);
+        $retrievedBankAccountAfterUpdate = $this->find($accountNumber);
 
         $this->assertEquals($expectedBankAccount, $retrievedBankAccountAfterUpdate);
     }
@@ -118,5 +120,10 @@ class FakeBankAccountRepositoryTest extends TestCase
         $this->expectException(RepositoryException::class);
         $this->expectExceptionMessage(RepositoryException::BANK_ACCOUNT_ALREADY_EXISTS);
         $this->bankAccountRepository->add($bankAccount);
+    }
+
+    private function find(string $accountNumber): BankAccount
+    {
+        return $this->bankAccountRepository->find(new AccountNumber($accountNumber));
     }
 }

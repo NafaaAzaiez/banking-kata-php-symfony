@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Usecase;
 
+use App\Domain\Account\AccountNumber;
+use App\Domain\Account\BankAccount;
 use App\Domain\Account\BankAccountRepository;
 use App\Domain\Exception\RepositoryException;
 use App\Domain\Exception\RequestValidationException;
@@ -44,7 +46,7 @@ class WithdrawFundsUseCaseTest extends TestCase
         $this->assertEquals($expectedResponse, $response);
 
         $expectedBankAccount = Factory::createDefaultBankAccount($accountNumber, $expectedFinalBalance);
-        $retrievedBankAccount = $this->bankAccountRepository->find($accountNumber);
+        $retrievedBankAccount = $this->find($accountNumber);
 
         $this->assertEquals($expectedBankAccount, $retrievedBankAccount);
     }
@@ -99,5 +101,10 @@ class WithdrawFundsUseCaseTest extends TestCase
     private function provideEmptyValues(): array
     {
         return [[''], [' '], ['   ']];
+    }
+
+    private function find(string $accountNumber): BankAccount
+    {
+        return $this->bankAccountRepository->find(new AccountNumber($accountNumber));
     }
 }

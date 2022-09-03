@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Infrastructure\Fake;
 
+use App\Domain\Account\AccountNumber;
 use App\Infrastructure\Fake\FakeAccountNumberGenerator;
 use PHPUnit\Framework\TestCase;
 
@@ -24,7 +25,7 @@ class FakeAccountNumberGeneratorTest extends TestCase
     public function testItGenerateNumberWhenThereIsOneAvailable(): void
     {
         $expectedValue = 'A45678';
-        $this->accountNumberGenerator->add($expectedValue);
+        $this->registerAccountNumber($expectedValue);
         $this->assertGeneratedNumberEquals($expectedValue);
     }
 
@@ -33,9 +34,9 @@ class FakeAccountNumberGeneratorTest extends TestCase
         $expectedValue1 = 'A45678';
         $expectedValue2 = 'B56787';
         $expectedValue3 = 'C10986';
-        $this->accountNumberGenerator->add($expectedValue1);
-        $this->accountNumberGenerator->add($expectedValue2);
-        $this->accountNumberGenerator->add($expectedValue3);
+        $this->registerAccountNumber($expectedValue1);
+        $this->registerAccountNumber($expectedValue2);
+        $this->registerAccountNumber($expectedValue3);
 
         $this->assertGeneratedNumberEquals($expectedValue1);
         $this->assertGeneratedNumberEquals($expectedValue2);
@@ -45,7 +46,7 @@ class FakeAccountNumberGeneratorTest extends TestCase
 
     private function assertGeneratedNumberEquals(string $number): void
     {
-        $this->assertEquals($number, $this->accountNumberGenerator->generate());
+        $this->assertEquals($number, $this->accountNumberGenerator->generate()->value());
     }
 
     private function assertGenerateThrowsException(): void
@@ -54,5 +55,10 @@ class FakeAccountNumberGeneratorTest extends TestCase
         $this->expectExceptionMessage(FakeAccountNumberGenerator::COULD_NOT_GENERATE_NUMBER_MESSAGE);
 
         $this->accountNumberGenerator->generate();
+    }
+
+    private function registerAccountNumber(string $accountNumber): void
+    {
+        $this->accountNumberGenerator->add(new AccountNumber($accountNumber));
     }
 }

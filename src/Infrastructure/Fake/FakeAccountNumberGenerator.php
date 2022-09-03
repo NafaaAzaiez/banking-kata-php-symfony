@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Fake;
 
+use App\Domain\Account\AccountNumber;
 use App\Domain\Account\AccountNumberGenerator;
 
 class FakeAccountNumberGenerator implements AccountNumberGenerator
@@ -12,16 +13,16 @@ class FakeAccountNumberGenerator implements AccountNumberGenerator
 
     private array $generatedAccountNumbers = [];
 
-    public function generate(): string
+    public function generate(): AccountNumber
     {
         if (0 === sizeof($this->generatedAccountNumbers)) {
             throw new \RuntimeException(self::COULD_NOT_GENERATE_NUMBER_MESSAGE);
         }
 
-        return (string) array_shift($this->generatedAccountNumbers);
+        return array_shift($this->generatedAccountNumbers);
     }
 
-    public function add(string $fakeAccountNumber): void
+    public function add(AccountNumber $fakeAccountNumber): void
     {
         $this->generatedAccountNumbers[] = $fakeAccountNumber;
     }

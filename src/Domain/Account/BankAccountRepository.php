@@ -6,7 +6,7 @@ namespace App\Domain\Account;
 
 interface BankAccountRepository
 {
-    public function find(string $accountNumber): BankAccount;
+    public function find(AccountNumber $accountNumber): BankAccount;
 
     public function add(BankAccount $bankAccount): void;
 

@@ -32,6 +32,6 @@ class OpenAccountUseCase
         $bankAccount = new BankAccount($accountNumber, $request->firstName, $request->lastName, $request->initialBalance);
         $this->bankAccountRepository->add($bankAccount);
 
-        return new OpenAccountResponse($accountNumber);
+        return new OpenAccountResponse($accountNumber->value());
     }
 }
