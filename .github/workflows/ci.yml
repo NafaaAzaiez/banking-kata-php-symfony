@@ -35,3 +35,5 @@ jobs:
               run: docker compose exec php vendor/bin/simple-phpunit
             - name: Check for vulnerabilities
               uses: docker://pplotka/local-php-security-checker-github-actions
+            - name: Run phpstan
+              run: ./vendor/bin/phpstan

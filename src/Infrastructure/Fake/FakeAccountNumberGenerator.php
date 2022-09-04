@@ -11,6 +11,7 @@ class FakeAccountNumberGenerator implements AccountNumberGenerator
 {
     public const COULD_NOT_GENERATE_NUMBER_MESSAGE = 'Could not generate an account number';
 
+    /** @var AccountNumber[] */
     private array $generatedAccountNumbers = [];
 
     public function generate(): AccountNumber

@@ -28,7 +28,7 @@ class WithdrawFundsUseCaseTest extends TestCase
         $this->useCase = new WithdrawFundsUseCase($this->bankAccountRepository);
     }
 
-    public function testItWithdrawsFundsGivenValidRequest()
+    public function testItWithdrawsFundsGivenValidRequest(): void
     {
         $accountNumber = 'Y665242';
         $initialBalance = 50;
@@ -93,11 +93,17 @@ class WithdrawFundsUseCaseTest extends TestCase
         $this->useCase->__invoke($request);
     }
 
+    /**
+     * @phpstan-ignore-next-line
+     */
     private function provideNonPositiveIntegers(): array
     {
         return [[0], [-1], [-12]];
     }
 
+    /**
+     * @phpstan-ignore-next-line
+     */
     private function provideEmptyValues(): array
     {
         return [[''], [' '], ['   ']];

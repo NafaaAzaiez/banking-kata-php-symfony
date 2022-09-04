@@ -36,4 +36,14 @@ class BankAccount
     {
         $this->balance = $balance;
     }
+
+    public function getFirstName(): string
+    {
+        return $this->firstName;
+    }
+
+    public function getLastName(): string
+    {
+        return $this->lastName;
+    }
 }

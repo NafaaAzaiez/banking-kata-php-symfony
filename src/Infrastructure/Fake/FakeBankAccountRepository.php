@@ -11,6 +11,7 @@ use App\Domain\Exception\RepositoryException;
 
 class FakeBankAccountRepository implements BankAccountRepository
 {
+    /** @var BankAccount[] */
     public static array $accounts = [];
 
     public function find(AccountNumber $accountNumber): BankAccount

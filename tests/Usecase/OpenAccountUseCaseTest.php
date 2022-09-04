@@ -82,11 +82,17 @@ class OpenAccountUseCaseTest extends KernelTestCase
         $this->useCase->__invoke($request);
     }
 
+    /**
+     * @phpstan-ignore-next-line
+     */
     private function provideAccountNumbers(): array
     {
         return [['A001'], ['B002'], ['C003']];
     }
 
+    /**
+     * @phpstan-ignore-next-line
+     */
     private function provideEmptyValues(): array
     {
         return [[''], [' '], ['   ']];
