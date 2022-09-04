@@ -20,12 +20,18 @@ class WithdrawFundsUseCaseTest extends TestCase
 {
     private WithdrawFundsUseCase $useCase;
 
+    /** @var BankAccountRepository|FakeBankAccountRepository */
     private BankAccountRepository $bankAccountRepository;
 
     protected function setUp(): void
     {
         $this->bankAccountRepository = new FakeBankAccountRepository();
         $this->useCase = new WithdrawFundsUseCase($this->bankAccountRepository);
+    }
+
+    protected function tearDown(): void
+    {
+        FakeBankAccountRepository::reset();
     }
 
     public function testItWithdrawsFundsGivenValidRequest(): void
@@ -89,6 +95,23 @@ class WithdrawFundsUseCaseTest extends TestCase
 
         $this->expectException(RequestValidationException::class);
         $this->expectExceptionMessage(RequestValidationException::NON_POSITIVE_TRANSACTION_AMOUNT);
+
+        $this->useCase->__invoke($request);
+    }
+
+    public function testItThrowExceptionGivenInsufficientFunds(): void
+    {
+        $accountNumber = 'Y665242';
+        $initialBalance = 50;
+        $amount = 150;
+
+        $bankAccount = Factory::createDefaultBankAccount($accountNumber, $initialBalance);
+        $this->bankAccountRepository->add($bankAccount);
+
+        $request = new WithdrawFundsRequest($accountNumber, $amount);
+
+        $this->expectException(RequestValidationException::class);
+        $this->expectExceptionMessage(RequestValidationException::INSUFFICIENT_FUNDS);
 
         $this->useCase->__invoke($request);
     }

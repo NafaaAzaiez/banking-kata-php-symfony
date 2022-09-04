@@ -18,6 +18,8 @@ class RequestValidationException extends \InvalidArgumentException
 
     public const NON_POSITIVE_TRANSACTION_AMOUNT = 'Transaction amount is not positive';
 
+    public const INSUFFICIENT_FUNDS = 'Insufficient funds"';
+
     public static function withMessage(string $message): self
     {
         return new self($message);
