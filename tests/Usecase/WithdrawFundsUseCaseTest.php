@@ -14,7 +14,7 @@ use App\Usecase\WithdrawFunds\WithdrawFundsRequest;
 use App\Usecase\WithdrawFunds\WithdrawFundsResponse;
 use App\Usecase\WithdrawFunds\WithdrawFundsUseCase;
 use PHPUnit\Framework\TestCase;
-use Tests\Common\Factory;
+use Tests\Builder\Entity\BankAccountBuilder;
 
 class WithdrawFundsUseCaseTest extends TestCase
 {
@@ -38,7 +38,11 @@ class WithdrawFundsUseCaseTest extends TestCase
     {
         $accountNumber = 'Y665242';
         $initialBalance = 50;
-        $bankAccount = Factory::createDefaultBankAccount($accountNumber, $initialBalance);
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($initialBalance)
+            ->build()
+        ;
         $this->bankAccountRepository->add($bankAccount);
 
         $amount = 10;
@@ -51,7 +55,11 @@ class WithdrawFundsUseCaseTest extends TestCase
 
         $this->assertEquals($expectedResponse, $response);
 
-        $expectedBankAccount = Factory::createDefaultBankAccount($accountNumber, $expectedFinalBalance);
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($expectedFinalBalance)
+            ->build()
+        ;
         $retrievedBankAccount = $this->find($accountNumber);
 
         $this->assertEquals($expectedBankAccount, $retrievedBankAccount);
@@ -88,7 +96,10 @@ class WithdrawFundsUseCaseTest extends TestCase
     {
         FakeBankAccountRepository::reset();
         $accountNumber = 'Y665242';
-        $bankAccount = Factory::createDefaultBankAccount($accountNumber);
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->build()
+        ;
         $this->bankAccountRepository->add($bankAccount);
 
         $request = new WithdrawFundsRequest($accountNumber, $amount);
@@ -105,7 +116,11 @@ class WithdrawFundsUseCaseTest extends TestCase
         $initialBalance = 50;
         $amount = 150;
 
-        $bankAccount = Factory::createDefaultBankAccount($accountNumber, $initialBalance);
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($initialBalance)
+            ->build()
+        ;
         $this->bankAccountRepository->add($bankAccount);
 
         $request = new WithdrawFundsRequest($accountNumber, $amount);

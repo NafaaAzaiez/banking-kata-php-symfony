@@ -13,7 +13,7 @@ use App\Usecase\OpenAccount\OpenAccountRequest;
 use App\Usecase\OpenAccount\OpenAccountResponse;
 use App\Usecase\OpenAccount\OpenAccountUseCase;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
-use Tests\Common\Factory;
+use Tests\Builder\Entity\BankAccountBuilder;
 
 class OpenAccountUseCaseTest extends KernelTestCase
 {
@@ -39,7 +39,13 @@ class OpenAccountUseCaseTest extends KernelTestCase
         $request = new OpenAccountRequest('John', 'Doe', $initialBalance);
         $expectedResponse = new OpenAccountResponse($accountNumber);
         $this->registerAccountNumber($accountNumber);
-        $expectedBankAccount = Factory::createBankAccount($accountNumber, $request->firstName, $request->lastName, $initialBalance);
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withFirstName($request->firstName)
+            ->withLastName($request->lastName)
+            ->withBalance($initialBalance)
+            ->build()
+        ;
 
         $response = $this->useCase->__invoke($request);
 

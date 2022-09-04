@@ -9,7 +9,7 @@ use App\Domain\Account\BankAccount;
 use App\Domain\Exception\RepositoryException;
 use App\Infrastructure\Fake\FakeBankAccountRepository;
 use PHPUnit\Framework\TestCase;
-use Tests\Common\Factory;
+use Tests\Builder\Entity\BankAccountBuilder;
 
 class FakeBankAccountRepositoryTest extends TestCase
 {
@@ -35,8 +35,11 @@ class FakeBankAccountRepositoryTest extends TestCase
 
     public function itReturnsBankAccountWhenItIsFound(): void
     {
-        $accountNumber = 'X89799810';
-        $bankAccount = Factory::createDefaultBankAccount($accountNumber);
+        $accountNumber = 'X4433122';
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->build()
+        ;
         $this->bankAccountRepository->add($bankAccount);
         $retrievedBankAccount = $this->find($accountNumber);
         $this->assertEquals($bankAccount, $retrievedBankAccount);
@@ -45,8 +48,14 @@ class FakeBankAccountRepositoryTest extends TestCase
     public function testItShouldNotBeAbleToChangeBankAccountAfterAdd(): void
     {
         $accountNumber = 'X89799810';
-        $bankAccount = Factory::createDefaultBankAccount($accountNumber);
-        $expectedBankAccount = Factory::createDefaultBankAccount($accountNumber);
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->build()
+        ;
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->build()
+        ;
 
         $this->bankAccountRepository->add($bankAccount);
 
@@ -60,8 +69,11 @@ class FakeBankAccountRepositoryTest extends TestCase
     public function testItShouldNotBeAbleToChangeBankAccountAfterFind(): void
     {
         $accountNumber = 'X89799810';
-        $bankAccount = Factory::createDefaultBankAccount($accountNumber);
-        $expectedBankAccount = Factory::createDefaultBankAccount($accountNumber);
+        $bankAccount = BankAccountBuilder::create()->withAccountNumber($accountNumber)->build();
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->build()
+        ;
 
         $this->bankAccountRepository->add($bankAccount);
 
@@ -77,8 +89,16 @@ class FakeBankAccountRepositoryTest extends TestCase
     {
         $accountNumber = 'X89799810';
         $initialBalance = 100;
-        $bankAccount = Factory::createDefaultBankAccount($accountNumber, $initialBalance);
-        $expectedBankAccount = Factory::createDefaultBankAccount($accountNumber, $initialBalance);
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($initialBalance)
+            ->build()
+        ;
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($initialBalance)
+            ->build()
+        ;
 
         $this->bankAccountRepository->add($bankAccount);
 
@@ -96,8 +116,16 @@ class FakeBankAccountRepositoryTest extends TestCase
         $accountNumber = 'X89799810';
         $initialBalance = 100;
         $expectedBalance = 50;
-        $bankAccount = Factory::createDefaultBankAccount($accountNumber, $initialBalance);
-        $expectedBankAccount = Factory::createDefaultBankAccount($accountNumber, $expectedBalance);
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($initialBalance)
+            ->build()
+        ;
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($expectedBalance)
+            ->build()
+        ;
 
         $this->bankAccountRepository->add($bankAccount);
 
@@ -113,7 +141,10 @@ class FakeBankAccountRepositoryTest extends TestCase
     public function shouldThrowExceptionWhenAttemptAddBankAccountWithSameAccountNumberTwice(): void
     {
         $accountNumber = 'X89799810';
-        $bankAccount = Factory::createDefaultBankAccount($accountNumber);
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->build()
+        ;
 
         $this->bankAccountRepository->add($bankAccount);
 
