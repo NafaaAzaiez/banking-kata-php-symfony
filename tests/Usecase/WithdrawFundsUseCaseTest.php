@@ -20,7 +20,6 @@ class WithdrawFundsUseCaseTest extends TestCase
 {
     private WithdrawFundsUseCase $useCase;
 
-    /** @var BankAccountRepository|FakeBankAccountRepository */
     private BankAccountRepository $bankAccountRepository;
 
     protected function setUp(): void
@@ -38,42 +37,24 @@ class WithdrawFundsUseCaseTest extends TestCase
     {
         $accountNumber = 'Y665242';
         $initialBalance = 50;
-        $bankAccount = BankAccountBuilder::create()
-            ->withAccountNumber($accountNumber)
-            ->withBalance($initialBalance)
-            ->build()
-        ;
-        $this->bankAccountRepository->add($bankAccount);
-
         $amount = 10;
-        $request = new WithdrawFundsRequest($accountNumber, $amount);
-
         $expectedFinalBalance = 40;
-        $expectedResponse = new WithdrawFundsResponse($expectedFinalBalance);
 
-        $response = $this->useCase->__invoke($request);
+        $this->givenBankAccount($accountNumber, $initialBalance);
 
-        $this->assertEquals($expectedResponse, $response);
+        $response = $this->withdrawFunds($accountNumber, $amount);
 
-        $expectedBankAccount = BankAccountBuilder::create()
-            ->withAccountNumber($accountNumber)
-            ->withBalance($expectedFinalBalance)
-            ->build()
-        ;
-        $retrievedBankAccount = $this->find($accountNumber);
-
-        $this->assertEquals($expectedBankAccount, $retrievedBankAccount);
+        $this->assertExpectedResponse($response, $expectedFinalBalance);
+        $this->assertContainsBankAccount($accountNumber, $expectedFinalBalance);
     }
 
     public function testItThrowExceptionGivenNonExistentAccountNumber(): void
     {
         $accountNumber = 'willNotBeFound';
-        $request = new WithdrawFundsRequest($accountNumber, 10);
 
-        $this->expectException(\DomainException::class);
-        $this->expectExceptionMessage(RepositoryException::BANK_ACCOUNT_NOT_FOUND_EXCEPTION_MESSAGE);
+        $this->expectExceptionWithMessage(RepositoryException::class, RepositoryException::BANK_ACCOUNT_NOT_FOUND_EXCEPTION_MESSAGE);
 
-        $this->useCase->__invoke($request);
+        $this->withdrawFunds($accountNumber, 10);
     }
 
     /**
@@ -81,12 +62,9 @@ class WithdrawFundsUseCaseTest extends TestCase
      */
     public function testItThrowExceptionGivenEmptyAccountNumber(string $accountNumber): void
     {
-        $request = new WithdrawFundsRequest($accountNumber, 10);
+        $this->expectExceptionWithMessage(RequestValidationException::class, RequestValidationException::EMPTY_ACCOUNT_NUMBER);
 
-        $this->expectException(RequestValidationException::class);
-        $this->expectExceptionMessage(RequestValidationException::EMPTY_ACCOUNT_NUMBER);
-
-        $this->useCase->__invoke($request);
+        $this->withdrawFunds($accountNumber, 10);
     }
 
     /**
@@ -94,20 +72,11 @@ class WithdrawFundsUseCaseTest extends TestCase
      */
     public function testItThrowsExceptionGivenNonPositiveAmount(int $amount): void
     {
-        FakeBankAccountRepository::reset();
         $accountNumber = 'Y665242';
-        $bankAccount = BankAccountBuilder::create()
-            ->withAccountNumber($accountNumber)
-            ->build()
-        ;
-        $this->bankAccountRepository->add($bankAccount);
 
-        $request = new WithdrawFundsRequest($accountNumber, $amount);
+        $this->expectExceptionWithMessage(RequestValidationException::class, RequestValidationException::NON_POSITIVE_TRANSACTION_AMOUNT);
 
-        $this->expectException(RequestValidationException::class);
-        $this->expectExceptionMessage(RequestValidationException::NON_POSITIVE_TRANSACTION_AMOUNT);
-
-        $this->useCase->__invoke($request);
+        $this->withdrawFunds($accountNumber, $amount);
     }
 
     public function testItThrowExceptionGivenInsufficientFunds(): void
@@ -116,19 +85,11 @@ class WithdrawFundsUseCaseTest extends TestCase
         $initialBalance = 50;
         $amount = 150;
 
-        $bankAccount = BankAccountBuilder::create()
-            ->withAccountNumber($accountNumber)
-            ->withBalance($initialBalance)
-            ->build()
-        ;
-        $this->bankAccountRepository->add($bankAccount);
+        $this->givenBankAccount($accountNumber, $initialBalance);
 
-        $request = new WithdrawFundsRequest($accountNumber, $amount);
+        $this->expectExceptionWithMessage(RequestValidationException::class, RequestValidationException::INSUFFICIENT_FUNDS);
 
-        $this->expectException(RequestValidationException::class);
-        $this->expectExceptionMessage(RequestValidationException::INSUFFICIENT_FUNDS);
-
-        $this->useCase->__invoke($request);
+        $this->withdrawFunds($accountNumber, $amount);
     }
 
     /**
@@ -150,5 +111,46 @@ class WithdrawFundsUseCaseTest extends TestCase
     private function find(string $accountNumber): BankAccount
     {
         return $this->bankAccountRepository->find(new AccountNumber($accountNumber));
+    }
+
+    private function givenBankAccount(string $accountNumber, int $balance): void
+    {
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($balance)
+            ->build()
+        ;
+        $this->bankAccountRepository->add($bankAccount);
+    }
+
+    private function assertContainsBankAccount(string $accountNumber, int $expectedBalance): void
+    {
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($expectedBalance)
+            ->build()
+        ;
+        $retrievedBankAccount = $this->find($accountNumber);
+
+        $this->assertEquals($expectedBankAccount, $retrievedBankAccount);
+    }
+
+    private function withdrawFunds(string $accountNumber, int $amount): WithdrawFundsResponse
+    {
+        $request = new WithdrawFundsRequest($accountNumber, $amount);
+
+        return $this->useCase->__invoke($request);
+    }
+
+    private function assertExpectedResponse(WithdrawFundsResponse $response, int $expectedBalance): void
+    {
+        $expectedResponse = new WithdrawFundsResponse($expectedBalance);
+        $this->assertEquals($expectedResponse, $response);
+    }
+
+    private function expectExceptionWithMessage(string $exceptionClass, string $exceptionMessage): void
+    {
+        $this->expectException($exceptionClass);
+        $this->expectExceptionMessage($exceptionMessage);
     }
 }

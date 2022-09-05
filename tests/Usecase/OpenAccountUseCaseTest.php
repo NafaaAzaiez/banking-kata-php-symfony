@@ -36,23 +36,15 @@ class OpenAccountUseCaseTest extends KernelTestCase
     public function testItOpensAccountGivenValidRequest(string $accountNumber): void
     {
         $initialBalance = 100;
-        $request = new OpenAccountRequest('John', 'Doe', $initialBalance);
-        $expectedResponse = new OpenAccountResponse($accountNumber);
+        $firstName = 'John';
+        $lastName = 'Doe';
+
         $this->registerAccountNumber($accountNumber);
-        $expectedBankAccount = BankAccountBuilder::create()
-            ->withAccountNumber($accountNumber)
-            ->withFirstName($request->firstName)
-            ->withLastName($request->lastName)
-            ->withBalance($initialBalance)
-            ->build()
-        ;
 
-        $response = $this->useCase->__invoke($request);
+        $response = $this->openAccount($firstName, $lastName, $initialBalance);
 
-        $retrievedBankAccount = $this->find($accountNumber);
-
-        $this->assertEquals($expectedResponse, $response);
-        $this->assertEquals($expectedBankAccount, $retrievedBankAccount);
+        $this->assertExpectedResponse($response, $accountNumber);
+        $this->assertContainsBankAccount($accountNumber, $firstName, $lastName, $initialBalance);
     }
 
     /**
@@ -60,11 +52,9 @@ class OpenAccountUseCaseTest extends KernelTestCase
      */
     public function testItThrowsExceptionGivenEmptyFirstName(string $firstName): void
     {
-        $request = new OpenAccountRequest($firstName, 'Doe', 0);
+        $this->expectExceptionWithMessage(RequestValidationException::class, RequestValidationException::INVALID_FIRST_NAME);
 
-        $this->expectException(RequestValidationException::class);
-        $this->expectExceptionMessage(RequestValidationException::INVALID_FIRST_NAME);
-        $this->useCase->__invoke($request);
+        $this->openAccount($firstName, 'Doe', 100);
     }
 
     /**
@@ -72,20 +62,16 @@ class OpenAccountUseCaseTest extends KernelTestCase
      */
     public function testItThrowsExceptionGivenEmptyLastName(string $lastName): void
     {
-        $request = new OpenAccountRequest('Doe', $lastName, 0);
+        $this->expectExceptionWithMessage(RequestValidationException::class, RequestValidationException::INVALID_LAST_NAME);
 
-        $this->expectException(RequestValidationException::class);
-        $this->expectExceptionMessage(RequestValidationException::INVALID_LAST_NAME);
-        $this->useCase->__invoke($request);
+        $this->openAccount('Doe', $lastName, 100);
     }
 
     public function testItThrowsExceptionGivenNegativeInitialBalance(): void
     {
-        $request = new OpenAccountRequest('John', 'Doe', -1);
+        $this->expectExceptionWithMessage(RequestValidationException::class, RequestValidationException::INITIAL_BALANCE_NEGATIVE);
 
-        $this->expectException(RequestValidationException::class);
-        $this->expectExceptionMessage(RequestValidationException::INITIAL_BALANCE_NEGATIVE);
-        $this->useCase->__invoke($request);
+        $this->openAccount('John', 'Doe', -1);
     }
 
     /**
@@ -112,5 +98,38 @@ class OpenAccountUseCaseTest extends KernelTestCase
     private function find(string $accountNumber): BankAccount
     {
         return $this->bankAccountRepository->find(new AccountNumber($accountNumber));
+    }
+
+    private function assertExpectedResponse(OpenAccountResponse $response, string $expectedAccountNumber): void
+    {
+        $expectedResponse = new OpenAccountResponse($expectedAccountNumber);
+        $this->assertEquals($expectedResponse, $response);
+    }
+
+    private function assertContainsBankAccount(string $accountNumber, string $firstName, string $lastName, int $expectedBalance): void
+    {
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withFirstName($firstName)
+            ->withLastName($lastName)
+            ->withBalance($expectedBalance)
+            ->build()
+        ;
+        $retrievedBankAccount = $this->find($accountNumber);
+
+        $this->assertEquals($expectedBankAccount, $retrievedBankAccount);
+    }
+
+    private function openAccount(string $firstName, string $lastName, int $initialBalance): OpenAccountResponse
+    {
+        $request = new OpenAccountRequest($firstName, $lastName, $initialBalance);
+
+        return $this->useCase->__invoke($request);
+    }
+
+    private function expectExceptionWithMessage(string $exceptionClass, string $exceptionMessage): void
+    {
+        $this->expectException($exceptionClass);
+        $this->expectExceptionMessage($exceptionMessage);
     }
 }
