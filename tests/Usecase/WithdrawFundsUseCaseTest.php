@@ -24,20 +24,14 @@ class WithdrawFundsUseCaseTest extends AbstractBankingTestCase
     {
         $this->bankAccountRepository = new FakeBankAccountRepository();
         $this->useCase = new WithdrawFundsUseCase($this->bankAccountRepository);
-    }
-
-    protected function tearDown(): void
-    {
         FakeBankAccountRepository::reset();
     }
 
-    public function testItWithdrawsFundsGivenValidRequest(): void
+    /**
+     * @dataProvider provideDataForValidWithdrawalRequest
+     */
+    public function testItWithdrawsFundsGivenValidRequest(string $accountNumber, int $initialBalance, int $amount, int $expectedFinalBalance): void
     {
-        $accountNumber = 'Y665242';
-        $initialBalance = 50;
-        $amount = 10;
-        $expectedFinalBalance = 40;
-
         $this->givenBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, $initialBalance);
 
         $response = $this->withdrawFunds($accountNumber, $amount);
@@ -88,6 +82,17 @@ class WithdrawFundsUseCaseTest extends AbstractBankingTestCase
         $this->expectExceptionWithMessage(RequestValidationException::class, RequestValidationException::INSUFFICIENT_FUNDS);
 
         $this->withdrawFunds($accountNumber, $amount);
+    }
+
+    /**
+     * @phpstan-ignore-next-line
+     */
+    public function provideDataForValidWithdrawalRequest(): array
+    {
+        return [
+            ['A001', 50, 20, 30],
+            ['B002', 100, 100, 0],
+        ];
     }
 
     /**
