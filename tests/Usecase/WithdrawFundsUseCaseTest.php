@@ -4,23 +4,21 @@ declare(strict_types=1);
 
 namespace Tests\Usecase;
 
-use App\Domain\Account\AccountNumber;
-use App\Domain\Account\BankAccount;
-use App\Domain\Account\BankAccountRepository;
 use App\Domain\Exception\RepositoryException;
 use App\Domain\Exception\RequestValidationException;
 use App\Infrastructure\Fake\FakeBankAccountRepository;
 use App\Usecase\WithdrawFunds\WithdrawFundsRequest;
 use App\Usecase\WithdrawFunds\WithdrawFundsResponse;
 use App\Usecase\WithdrawFunds\WithdrawFundsUseCase;
-use PHPUnit\Framework\TestCase;
-use Tests\Builder\Entity\BankAccountBuilder;
+use Tests\AbstractBankingTestCase;
 
-class WithdrawFundsUseCaseTest extends TestCase
+class WithdrawFundsUseCaseTest extends AbstractBankingTestCase
 {
-    private WithdrawFundsUseCase $useCase;
+    private const FIRSTNAME = 'John';
 
-    private BankAccountRepository $bankAccountRepository;
+    private const LASTNAME = 'DOE';
+
+    private WithdrawFundsUseCase $useCase;
 
     protected function setUp(): void
     {
@@ -40,12 +38,12 @@ class WithdrawFundsUseCaseTest extends TestCase
         $amount = 10;
         $expectedFinalBalance = 40;
 
-        $this->givenBankAccount($accountNumber, $initialBalance);
+        $this->givenBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, $initialBalance);
 
         $response = $this->withdrawFunds($accountNumber, $amount);
 
         $this->assertExpectedResponse($response, $expectedFinalBalance);
-        $this->assertContainsBankAccount($accountNumber, $expectedFinalBalance);
+        $this->assertContainsBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, $expectedFinalBalance);
     }
 
     public function testItThrowExceptionGivenNonExistentAccountNumber(): void
@@ -85,7 +83,7 @@ class WithdrawFundsUseCaseTest extends TestCase
         $initialBalance = 50;
         $amount = 150;
 
-        $this->givenBankAccount($accountNumber, $initialBalance);
+        $this->givenBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, $initialBalance);
 
         $this->expectExceptionWithMessage(RequestValidationException::class, RequestValidationException::INSUFFICIENT_FUNDS);
 
@@ -108,33 +106,6 @@ class WithdrawFundsUseCaseTest extends TestCase
         return [[''], [' '], ['   ']];
     }
 
-    private function find(string $accountNumber): BankAccount
-    {
-        return $this->bankAccountRepository->find(new AccountNumber($accountNumber));
-    }
-
-    private function givenBankAccount(string $accountNumber, int $balance): void
-    {
-        $bankAccount = BankAccountBuilder::create()
-            ->withAccountNumber($accountNumber)
-            ->withBalance($balance)
-            ->build()
-        ;
-        $this->bankAccountRepository->add($bankAccount);
-    }
-
-    private function assertContainsBankAccount(string $accountNumber, int $expectedBalance): void
-    {
-        $expectedBankAccount = BankAccountBuilder::create()
-            ->withAccountNumber($accountNumber)
-            ->withBalance($expectedBalance)
-            ->build()
-        ;
-        $retrievedBankAccount = $this->find($accountNumber);
-
-        $this->assertEquals($expectedBankAccount, $retrievedBankAccount);
-    }
-
     private function withdrawFunds(string $accountNumber, int $amount): WithdrawFundsResponse
     {
         $request = new WithdrawFundsRequest($accountNumber, $amount);
@@ -146,11 +117,5 @@ class WithdrawFundsUseCaseTest extends TestCase
     {
         $expectedResponse = new WithdrawFundsResponse($expectedBalance);
         $this->assertEquals($expectedResponse, $response);
-    }
-
-    private function expectExceptionWithMessage(string $exceptionClass, string $exceptionMessage): void
-    {
-        $this->expectException($exceptionClass);
-        $this->expectExceptionMessage($exceptionMessage);
     }
 }

@@ -8,14 +8,16 @@ use App\Domain\Account\AccountNumber;
 use App\Domain\Account\BankAccount;
 use App\Domain\Exception\RepositoryException;
 use App\Infrastructure\Fake\FakeBankAccountRepository;
-use PHPUnit\Framework\TestCase;
+use Tests\AbstractBankingTestCase;
 use Tests\Builder\Entity\BankAccountBuilder;
 
-class FakeBankAccountRepositoryTest extends TestCase
+class FakeBankAccountRepositoryTest extends AbstractBankingTestCase
 {
     private const BALANCE = 100;
 
-    private FakeBankAccountRepository $bankAccountRepository;
+    private const FIRSTNAME = 'John';
+
+    private const LASTNAME = 'DOE';
 
     protected function setUp(): void
     {
@@ -38,9 +40,9 @@ class FakeBankAccountRepositoryTest extends TestCase
     {
         $accountNumber = 'X4433122';
 
-        $this->givenBankAccount($accountNumber, self::BALANCE);
+        $this->givenBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
 
-        $this->assertContainsBankAccount($accountNumber, self::BALANCE);
+        $this->assertContainsBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
     }
 
     public function testItShouldNotBeAbleToChangeBankAccountAfterAdd(): void
@@ -48,6 +50,8 @@ class FakeBankAccountRepositoryTest extends TestCase
         $accountNumber = 'X89799810';
         $bankAccount = BankAccountBuilder::create()
             ->withAccountNumber($accountNumber)
+            ->withFirstName(self::FIRSTNAME)
+            ->withLastName(self::LASTNAME)
             ->withBalance(self::BALANCE)
             ->build()
         ;
@@ -56,32 +60,32 @@ class FakeBankAccountRepositoryTest extends TestCase
 
         $bankAccount->setBalance(500);
 
-        $this->assertContainsBankAccount($accountNumber, self::BALANCE);
+        $this->assertContainsBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
     }
 
     public function testItShouldNotBeAbleToChangeBankAccountAfterFind(): void
     {
         $accountNumber = 'X89799810';
 
-        $this->givenBankAccount($accountNumber, self::BALANCE);
+        $this->givenBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
 
         $retrievedBankAccount = $this->find($accountNumber);
         $retrievedBankAccount->setBalance(500);
 
-        $this->assertContainsBankAccount($accountNumber, self::BALANCE);
+        $this->assertContainsBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
     }
 
     public function testItShouldNotBeAbleToChangeBankAccountAfterUpdate(): void
     {
         $accountNumber = 'X89799810';
 
-        $this->givenBankAccount($accountNumber, self::BALANCE);
+        $this->givenBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
 
         $retrievedBankAccount = $this->find($accountNumber);
         $this->bankAccountRepository->update($retrievedBankAccount);
         $retrievedBankAccount->setBalance(500);
 
-        $this->assertContainsBankAccount($accountNumber, self::BALANCE);
+        $this->assertContainsBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
     }
 
     public function testItShouldRetrieveUpdatedBankAccountAfterUpdate(): void
@@ -89,20 +93,20 @@ class FakeBankAccountRepositoryTest extends TestCase
         $accountNumber = 'X89799810';
         $expectedBalance = 50;
 
-        $this->givenBankAccount($accountNumber, self::BALANCE);
+        $this->givenBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
 
         $retrievedBankAccount = $this->find($accountNumber);
         $retrievedBankAccount->setBalance(50);
         $this->bankAccountRepository->update($retrievedBankAccount);
 
-        $this->assertContainsBankAccount($accountNumber, $expectedBalance);
+        $this->assertContainsBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, $expectedBalance);
     }
 
     public function shouldThrowExceptionWhenAttemptAddBankAccountWithSameAccountNumberTwice(): void
     {
         $accountNumber = 'X89799810';
 
-        $this->givenBankAccount($accountNumber, self::BALANCE);
+        $this->givenBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
 
         $anotherBankAccountWithTheSameNumber = BankAccountBuilder::create()
             ->withAccountNumber($accountNumber)
@@ -117,33 +121,5 @@ class FakeBankAccountRepositoryTest extends TestCase
     private function find(string $accountNumber): BankAccount
     {
         return $this->bankAccountRepository->find(new AccountNumber($accountNumber));
-    }
-
-    private function givenBankAccount(string $accountNumber, int $balance): void
-    {
-        $bankAccount = BankAccountBuilder::create()
-            ->withAccountNumber($accountNumber)
-            ->withBalance($balance)
-            ->build()
-        ;
-        $this->bankAccountRepository->add($bankAccount);
-    }
-
-    private function expectExceptionWithMessage(string $exceptionClass, string $exceptionMessage): void
-    {
-        $this->expectException($exceptionClass);
-        $this->expectExceptionMessage($exceptionMessage);
-    }
-
-    private function assertContainsBankAccount(string $accountNumber, int $expectedBalance): void
-    {
-        $expectedBankAccount = BankAccountBuilder::create()
-            ->withAccountNumber($accountNumber)
-            ->withBalance($expectedBalance)
-            ->build()
-        ;
-        $retrievedBankAccount = $this->find($accountNumber);
-
-        $this->assertEquals($expectedBankAccount, $retrievedBankAccount);
     }
 }
