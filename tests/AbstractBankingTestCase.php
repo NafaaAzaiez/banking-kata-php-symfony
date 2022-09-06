@@ -50,4 +50,12 @@ abstract class AbstractBankingTestCase extends TestCase
     {
         return $this->bankAccountRepository->find(new AccountNumber($accountNumber));
     }
+
+    /**
+     * @phpstan-ignore-next-line
+     */
+    private function provideEmptyValues(): array
+    {
+        return [[''], [' '], ['   ']];
+    }
 }

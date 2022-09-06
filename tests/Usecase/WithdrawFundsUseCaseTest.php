@@ -103,14 +103,6 @@ class WithdrawFundsUseCaseTest extends AbstractBankingTestCase
         return [[0], [-1], [-12]];
     }
 
-    /**
-     * @phpstan-ignore-next-line
-     */
-    private function provideEmptyValues(): array
-    {
-        return [[''], [' '], ['   ']];
-    }
-
     private function withdrawFunds(string $accountNumber, int $amount): WithdrawFundsResponse
     {
         $request = new WithdrawFundsRequest($accountNumber, $amount);
