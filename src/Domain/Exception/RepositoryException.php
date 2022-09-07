@@ -6,7 +6,7 @@ namespace App\Domain\Exception;
 
 class RepositoryException extends \DomainException
 {
-    public const BANK_ACCOUNT_NOT_FOUND_EXCEPTION_MESSAGE = 'Bank account not found';
+    public const BANK_ACCOUNT_NOT_FOUND = 'Bank account not found';
 
     public const CAN_NOT_UPDATE_NON_EXISTENT_BANK_ACCOUNT = 'Can not update non-existent bank account';
 

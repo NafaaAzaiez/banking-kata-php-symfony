@@ -17,7 +17,7 @@ class FakeBankAccountRepository implements BankAccountRepository
     public function find(AccountNumber $accountNumber): BankAccount
     {
         if (!key_exists($accountNumber->value(), self::$accounts)) {
-            throw RepositoryException::withMessage(RepositoryException::BANK_ACCOUNT_NOT_FOUND_EXCEPTION_MESSAGE);
+            throw RepositoryException::withMessage(RepositoryException::BANK_ACCOUNT_NOT_FOUND);
         }
 
         $bankAccount = self::$accounts[$accountNumber->value()];

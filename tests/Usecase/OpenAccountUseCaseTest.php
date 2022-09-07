@@ -12,6 +12,7 @@ use App\Usecase\OpenAccount\OpenAccountRequest;
 use App\Usecase\OpenAccount\OpenAccountResponse;
 use App\Usecase\OpenAccount\OpenAccountUseCase;
 use Tests\AbstractBankingTestCase;
+use Tests\Builder\Entity\BankAccountBuilder;
 
 class OpenAccountUseCaseTest extends AbstractBankingTestCase
 {
@@ -40,7 +41,15 @@ class OpenAccountUseCaseTest extends AbstractBankingTestCase
         $response = $this->openAccount($firstName, $lastName, $initialBalance);
 
         $this->assertExpectedResponse($response, $accountNumber);
-        $this->assertContainsBankAccount($accountNumber, $firstName, $lastName, $initialBalance);
+
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withFirstName($firstName)
+            ->withLastName($lastName)
+            ->withBalance($initialBalance)
+            ->build()
+        ;
+        $this->assertContainsBankAccount($expectedBankAccount);
     }
 
     /**

@@ -11,13 +11,10 @@ use App\Usecase\DepositFunds\DepositFundsRequest;
 use App\Usecase\DepositFunds\DepositFundsResponse;
 use App\Usecase\DepositFunds\DepositFundsUseCase;
 use Tests\AbstractBankingTestCase;
+use Tests\Builder\Entity\BankAccountBuilder;
 
 class DepositFundsUseCaseTest extends AbstractBankingTestCase
 {
-    private const FIRSTNAME = 'John';
-
-    private const LASTNAME = 'DOE';
-
     private DepositFundsUseCase $useCase;
 
     protected function setUp(): void
@@ -30,7 +27,11 @@ class DepositFundsUseCaseTest extends AbstractBankingTestCase
     {
         $accountNumber = 'Y998771';
 
-        $this->givenBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, 100);
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->build()
+        ;
+        $this->givenBankAccount($bankAccount);
 
         $response = $this->depositFunds($accountNumber);
 
@@ -42,7 +43,7 @@ class DepositFundsUseCaseTest extends AbstractBankingTestCase
     {
         $accountNumber = 'wontBeFound';
 
-        $this->expectExceptionWithMessage(RepositoryException::class, RepositoryException::BANK_ACCOUNT_NOT_FOUND_EXCEPTION_MESSAGE);
+        $this->expectExceptionWithMessage(RepositoryException::class, RepositoryException::BANK_ACCOUNT_NOT_FOUND);
         $this->depositFunds($accountNumber);
     }
 

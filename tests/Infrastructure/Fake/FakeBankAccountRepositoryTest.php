@@ -13,12 +13,6 @@ use Tests\Builder\Entity\BankAccountBuilder;
 
 class FakeBankAccountRepositoryTest extends AbstractBankingTestCase
 {
-    private const BALANCE = 100;
-
-    private const FIRSTNAME = 'John';
-
-    private const LASTNAME = 'DOE';
-
     protected function setUp(): void
     {
         $this->bankAccountRepository = new FakeBankAccountRepository();
@@ -31,7 +25,7 @@ class FakeBankAccountRepositoryTest extends AbstractBankingTestCase
 
     public function testItThrowsExceptionWhenBankAccountNotFound(): void
     {
-        $this->expectExceptionWithMessage(RepositoryException::class, RepositoryException::BANK_ACCOUNT_NOT_FOUND_EXCEPTION_MESSAGE);
+        $this->expectExceptionWithMessage(RepositoryException::class, RepositoryException::BANK_ACCOUNT_NOT_FOUND);
 
         $this->find('whatever');
     }
@@ -39,74 +33,122 @@ class FakeBankAccountRepositoryTest extends AbstractBankingTestCase
     public function itReturnsBankAccountWhenItIsFound(): void
     {
         $accountNumber = 'X4433122';
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->build()
+        ;
 
-        $this->givenBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
+        $this->givenBankAccount($bankAccount);
 
-        $this->assertContainsBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->build()
+        ;
+
+        $this->assertContainsBankAccount($expectedBankAccount);
     }
 
     public function testItShouldNotBeAbleToChangeBankAccountAfterAdd(): void
     {
         $accountNumber = 'X89799810';
+        $initialBalance = 100;
         $bankAccount = BankAccountBuilder::create()
             ->withAccountNumber($accountNumber)
-            ->withFirstName(self::FIRSTNAME)
-            ->withLastName(self::LASTNAME)
-            ->withBalance(self::BALANCE)
+            ->withBalance($initialBalance)
             ->build()
         ;
 
-        $this->bankAccountRepository->add($bankAccount);
+        $this->givenBankAccount($bankAccount);
 
         $bankAccount->setBalance(500);
 
-        $this->assertContainsBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($initialBalance)
+            ->build()
+        ;
+        $this->assertContainsBankAccount($expectedBankAccount);
     }
 
     public function testItShouldNotBeAbleToChangeBankAccountAfterFind(): void
     {
         $accountNumber = 'X89799810';
-
-        $this->givenBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
+        $initialBalance = 100;
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($initialBalance)
+            ->build()
+        ;
+        $this->givenBankAccount($bankAccount);
 
         $retrievedBankAccount = $this->find($accountNumber);
         $retrievedBankAccount->setBalance(500);
 
-        $this->assertContainsBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($initialBalance)
+            ->build()
+        ;
+        $this->assertContainsBankAccount($expectedBankAccount);
     }
 
     public function testItShouldNotBeAbleToChangeBankAccountAfterUpdate(): void
     {
         $accountNumber = 'X89799810';
-
-        $this->givenBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
+        $initialBalance = 100;
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($initialBalance)
+            ->build()
+        ;
+        $this->givenBankAccount($bankAccount);
 
         $retrievedBankAccount = $this->find($accountNumber);
         $this->bankAccountRepository->update($retrievedBankAccount);
         $retrievedBankAccount->setBalance(500);
 
-        $this->assertContainsBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($initialBalance)
+            ->build()
+        ;
+        $this->assertContainsBankAccount($expectedBankAccount);
     }
 
     public function testItShouldRetrieveUpdatedBankAccountAfterUpdate(): void
     {
         $accountNumber = 'X89799810';
+        $initialBalance = 100;
         $expectedBalance = 50;
 
-        $this->givenBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($initialBalance)
+            ->build()
+        ;
+        $this->givenBankAccount($bankAccount);
 
         $retrievedBankAccount = $this->find($accountNumber);
         $retrievedBankAccount->setBalance(50);
         $this->bankAccountRepository->update($retrievedBankAccount);
 
-        $this->assertContainsBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, $expectedBalance);
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($expectedBalance)
+            ->build()
+        ;
+        $this->assertContainsBankAccount($expectedBankAccount);
     }
 
     public function shouldThrowExceptionWhenAttemptAddBankAccountWithSameAccountNumberTwice(): void
     {
         $accountNumber = 'X89799810';
 
-        $this->givenBankAccount($accountNumber, self::FIRSTNAME, self::LASTNAME, self::BALANCE);
+        $bankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->build()
+        ;
+        $this->givenBankAccount($bankAccount);
 
         $anotherBankAccountWithTheSameNumber = BankAccountBuilder::create()
             ->withAccountNumber($accountNumber)
