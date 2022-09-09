@@ -8,8 +8,11 @@ class DepositFundsRequest
 {
     public string $accountNumber;
 
-    public function __construct(string $accountNumber)
+    public int $amount;
+
+    public function __construct(string $accountNumber, int $amount)
     {
         $this->accountNumber = $accountNumber;
+        $this->amount = $amount;
     }
 }

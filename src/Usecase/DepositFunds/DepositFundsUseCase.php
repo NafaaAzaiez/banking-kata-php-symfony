@@ -21,6 +21,7 @@ class DepositFundsUseCase
     public function __invoke(DepositFundsRequest $request): DepositFundsResponse
     {
         Validator::assertNotBlank($request->accountNumber, RequestValidationException::EMPTY_ACCOUNT_NUMBER);
+        Validator::assertStrictPositive($request->amount, RequestValidationException::NON_POSITIVE_TRANSACTION_AMOUNT);
 
         $bankAccount = $this->bankAccountRepository->find(new AccountNumber($request->accountNumber));
 

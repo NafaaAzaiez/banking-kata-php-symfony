@@ -37,4 +37,12 @@ abstract class AbstractBankingTestCase extends TestCase
     {
         return [[''], [' '], ['   ']];
     }
+
+    /**
+     * @phpstan-ignore-next-line
+     */
+    private function provideNonStrictPositiveIntegers(): array
+    {
+        return [[0], [-1], [-12]];
+    }
 }

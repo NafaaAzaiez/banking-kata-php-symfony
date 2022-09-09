@@ -69,7 +69,7 @@ class WithdrawFundsUseCaseTest extends AbstractBankingTestCase
     }
 
     /**
-     * @dataProvider provideNonPositiveIntegers
+     * @dataProvider provideNonStrictPositiveIntegers
      */
     public function testItThrowsExceptionGivenNonPositiveAmount(int $amount): void
     {
@@ -108,14 +108,6 @@ class WithdrawFundsUseCaseTest extends AbstractBankingTestCase
             ['A001', 50, 20, 30],
             ['B002', 100, 100, 0],
         ];
-    }
-
-    /**
-     * @phpstan-ignore-next-line
-     */
-    private function provideNonPositiveIntegers(): array
-    {
-        return [[0], [-1], [-12]];
     }
 
     private function withdrawFunds(string $accountNumber, int $amount): WithdrawFundsResponse
