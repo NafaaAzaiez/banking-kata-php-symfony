@@ -24,7 +24,9 @@ class DepositFundsUseCase
         Validator::assertStrictPositive($request->amount, RequestValidationException::NON_POSITIVE_TRANSACTION_AMOUNT);
 
         $bankAccount = $this->bankAccountRepository->find(new AccountNumber($request->accountNumber));
+        $balance = $bankAccount->getBalance();
+        $balance += $request->amount;
 
-        return new DepositFundsResponse();
+        return new DepositFundsResponse($balance);
     }
 }

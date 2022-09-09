@@ -26,16 +26,20 @@ class DepositFundsUseCaseTest extends AbstractBankingTestCase
     public function testItShouldDepositFundsGivenValidRequest(): void
     {
         $accountNumber = 'Y998771';
+        $initialBalance = 100;
+        $amount = 50;
+        $expectedFinalBalance = 150;
 
         $bankAccount = BankAccountBuilder::create()
             ->withAccountNumber($accountNumber)
+            ->withBalance($initialBalance)
             ->build()
         ;
         $this->givenBankAccount($bankAccount);
 
-        $response = $this->depositFunds($accountNumber, 10);
+        $response = $this->depositFunds($accountNumber, $amount);
 
-        $expectedResponse = new DepositFundsResponse();
+        $expectedResponse = new DepositFundsResponse($expectedFinalBalance);
         $this->assertEquals($expectedResponse, $response);
     }
 
