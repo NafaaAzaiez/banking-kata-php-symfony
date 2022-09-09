@@ -41,6 +41,14 @@ class DepositFundsUseCaseTest extends AbstractBankingTestCase
 
         $expectedResponse = new DepositFundsResponse($expectedFinalBalance);
         $this->assertEquals($expectedResponse, $response);
+
+        $expectedBankAccount = BankAccountBuilder::create()
+            ->withAccountNumber($accountNumber)
+            ->withBalance($expectedFinalBalance)
+            ->build()
+        ;
+
+        $this->assertContainsBankAccount($expectedBankAccount);
     }
 
     /**
