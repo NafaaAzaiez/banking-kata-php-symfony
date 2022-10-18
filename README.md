@@ -1,4 +1,4 @@
-# Banking Kata - PHP Symfony
+# (WIP) Banking Kata - PHP Symfony
 
 ## Credit and Acknowledgement
 
