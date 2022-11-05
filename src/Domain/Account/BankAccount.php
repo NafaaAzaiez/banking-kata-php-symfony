@@ -8,17 +8,14 @@ class BankAccount
 {
     private AccountNumber $accountNumber;
 
-    private string $firstName;
-
-    private string $lastName;
+    private AccountHolderName $accountHolderName;
 
     private int $balance;
 
-    public function __construct(AccountNumber $accountNumber, string $firstName, string $lastName, int $balance)
+    public function __construct(AccountNumber $accountNumber, AccountHolderName $accountHolderName, int $balance)
     {
         $this->accountNumber = $accountNumber;
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
+        $this->accountHolderName = $accountHolderName;
         $this->balance = $balance;
     }
 
@@ -37,13 +34,8 @@ class BankAccount
         $this->balance = $balance;
     }
 
-    public function getFirstName(): string
+    public function getAccountHolderName(): AccountHolderName
     {
-        return $this->firstName;
-    }
-
-    public function getLastName(): string
-    {
-        return $this->lastName;
+        return $this->accountHolderName;
     }
 }

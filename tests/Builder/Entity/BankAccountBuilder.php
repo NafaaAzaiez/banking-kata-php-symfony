@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Builder\Entity;
 
+use App\Domain\Account\AccountHolderName;
 use App\Domain\Account\AccountNumber;
 use App\Domain\Account\BankAccount;
 
@@ -68,6 +69,8 @@ class BankAccountBuilder
 
     public function build(): BankAccount
     {
-        return new BankAccount($this->accountNumber, $this->firstName, $this->lastName, $this->balance);
+        $accountHolderName = new AccountHolderName($this->firstName, $this->lastName);
+
+        return new BankAccount($this->accountNumber, $accountHolderName, $this->balance);
     }
 }
