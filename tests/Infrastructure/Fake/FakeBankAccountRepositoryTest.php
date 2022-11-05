@@ -60,7 +60,7 @@ class FakeBankAccountRepositoryTest extends AbstractBankingTestCase
 
         $this->givenBankAccount($bankAccount);
 
-        $bankAccount->setBalance(500);
+        $bankAccount->deposit(500);
 
         $expectedBankAccount = BankAccountBuilder::create()
             ->withAccountNumber($accountNumber)
@@ -82,7 +82,7 @@ class FakeBankAccountRepositoryTest extends AbstractBankingTestCase
         $this->givenBankAccount($bankAccount);
 
         $retrievedBankAccount = $this->find($accountNumber);
-        $retrievedBankAccount->setBalance(500);
+        $retrievedBankAccount->deposit(500);
 
         $expectedBankAccount = BankAccountBuilder::create()
             ->withAccountNumber($accountNumber)
@@ -105,7 +105,7 @@ class FakeBankAccountRepositoryTest extends AbstractBankingTestCase
 
         $retrievedBankAccount = $this->find($accountNumber);
         $this->bankAccountRepository->update($retrievedBankAccount);
-        $retrievedBankAccount->setBalance(500);
+        $retrievedBankAccount->deposit(500);
 
         $expectedBankAccount = BankAccountBuilder::create()
             ->withAccountNumber($accountNumber)
@@ -129,7 +129,7 @@ class FakeBankAccountRepositoryTest extends AbstractBankingTestCase
         $this->givenBankAccount($bankAccount);
 
         $retrievedBankAccount = $this->find($accountNumber);
-        $retrievedBankAccount->setBalance(50);
+        $retrievedBankAccount->withdraw(50);
         $this->bankAccountRepository->update($retrievedBankAccount);
 
         $expectedBankAccount = BankAccountBuilder::create()

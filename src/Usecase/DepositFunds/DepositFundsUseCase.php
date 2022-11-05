@@ -25,13 +25,10 @@ class DepositFundsUseCase
 
         $bankAccount = $this->bankAccountRepository->find(new AccountNumber($request->accountNumber));
 
-        $balance = $bankAccount->getBalance();
-        $balance += $request->amount;
-
-        $bankAccount->setBalance($balance);
+        $bankAccount->deposit($request->amount);
 
         $this->bankAccountRepository->update($bankAccount);
 
-        return new DepositFundsResponse($balance);
+        return new DepositFundsResponse($bankAccount->getBalance());
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Account;
 
+use App\Domain\Exception\RequestValidationException;
+
 class BankAccount
 {
     private AccountNumber $accountNumber;
@@ -29,9 +31,18 @@ class BankAccount
         return $this->balance;
     }
 
-    public function setBalance(int $balance): void
+    public function deposit(int $amount): void
     {
-        $this->balance = $balance;
+        $this->balance += $amount;
+    }
+
+    public function withdraw(int $amount): void
+    {
+        if ($amount > $this->balance) {
+            throw RequestValidationException::withMessage(RequestValidationException::INSUFFICIENT_FUNDS);
+        }
+
+        $this->balance -= $amount;
     }
 
     public function getAccountHolderName(): AccountHolderName

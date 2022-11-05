@@ -25,14 +25,10 @@ class WithdrawFundsUseCase
 
         $bankAccount = $this->bankAccountRepository->find(new AccountNumber($request->accountNumber));
 
-        $balance = $bankAccount->getBalance() - $request->amount;
-
-        Validator::assertNotNegative($balance, RequestValidationException::INSUFFICIENT_FUNDS);
-
-        $bankAccount->setBalance($balance);
+        $bankAccount->withdraw($request->amount);
 
         $this->bankAccountRepository->update($bankAccount);
 
-        return new WithdrawFundsResponse($balance);
+        return new WithdrawFundsResponse($bankAccount->getBalance());
     }
 }
