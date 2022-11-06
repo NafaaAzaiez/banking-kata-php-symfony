@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Usecase;
 
-use App\Domain\Account\AccountNumber;
 use App\Domain\Exception\RequestValidationException;
 use App\Infrastructure\Fake\FakeAccountNumberGenerator;
 use App\Infrastructure\Fake\FakeBankAccountRepository;
@@ -13,9 +12,12 @@ use App\Usecase\OpenAccount\OpenAccountResponse;
 use App\Usecase\OpenAccount\OpenAccountUseCase;
 use Tests\AbstractBankingTestCase;
 use Tests\Builder\Entity\BankAccountBuilder;
+use Tests\Common\GherkinFunctions;
 
 class OpenAccountUseCaseTest extends AbstractBankingTestCase
 {
+    use GherkinFunctions;
+
     private OpenAccountUseCase $useCase;
 
     private FakeAccountNumberGenerator $accountNumberGenerator;
@@ -36,7 +38,7 @@ class OpenAccountUseCaseTest extends AbstractBankingTestCase
         $firstName = 'John';
         $lastName = 'Doe';
 
-        $this->registerAccountNumber($accountNumber);
+        $this->givenThatGenerator($this->accountNumberGenerator)->willGenerateAccountNumber($accountNumber);
 
         $response = $this->openAccount($firstName, $lastName, $initialBalance);
 
@@ -93,11 +95,6 @@ class OpenAccountUseCaseTest extends AbstractBankingTestCase
     private function provideEmptyValues(): array
     {
         return [[''], [' '], ['   ']];
-    }
-
-    private function registerAccountNumber(string $accountNumber): void
-    {
-        $this->accountNumberGenerator->add(new AccountNumber($accountNumber));
     }
 
     private function assertExpectedResponse(OpenAccountResponse $response, string $expectedAccountNumber): void
